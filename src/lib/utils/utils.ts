@@ -10,7 +10,7 @@ export const generateGridPoints = () => {
   // Calculate the step size
   const step = (bottomRight.x - topLeft.x) / gridsize;
 
-  calculateBoardCords({
+  const boardCords = calculateBoardCords({
     boardSize: gridsize,
     x: topLeft.x,
     y: topLeft.y,
@@ -68,9 +68,8 @@ export const generateGridPoints = () => {
       });
     }
   }
-  console.log(gridLines);
 
-  return gridLines;
+  return { gridLines, boardCords };
 };
 
 // Assuming the board has a fixed width and height, e.g., 600x600
@@ -114,5 +113,5 @@ const calculateBoardCords = (args: {
     }
   }
 
-  console.log(boardCords);
+  return boardCords;
 };
