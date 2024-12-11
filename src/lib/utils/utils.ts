@@ -1,16 +1,13 @@
+import { T_GridLines } from "@/types/types";
+
 export const generateGridPoints = () => {
-  const gridLines: {
-    from: { x: number; y: number };
-    to: { x: number; y: number };
-  }[] = [];
+  const gridLines: T_GridLines = [];
 
   const startPoint = 0;
   const endPoint = 500;
 
   // Calculate the step size
   const step = (endPoint - startPoint) / 5;
-
-  console.log(step);
 
   // Add left boundry lines
   for (let i = startPoint; i < endPoint; i += step) {
@@ -44,5 +41,26 @@ export const generateGridPoints = () => {
     });
   }
 
-  console.log(gridLines);
+  // add horizontal lines
+  for (let i = startPoint; i < endPoint; i += step) {
+    for (let j = startPoint; j < endPoint; j += step) {
+      gridLines.push({
+        from: { x: i, y: j },
+        to: { x: i, y: j + step },
+      });
+    }
+  }
+
+  // add vertical lines
+  for (let i = startPoint; i < endPoint; i += step) {
+    for (let j = startPoint; j < endPoint; j += step) {
+      gridLines.push({
+        from: { x: j, y: i },
+        to: { x: j + step, y: i },
+      });
+    }
+  }
+
+  //   console.log(gridLines);
+  return gridLines;
 };
