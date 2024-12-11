@@ -24,41 +24,41 @@ export const generateGridPoints = () => {
     });
   }
 
-  // // Add top boundry lines
-  // for (let i = topLeft.x; i < bottomRight.x; i += step) {
-  //   gridLines.push({
-  //     from: { x: i, y: startPoint },
-  //     to: { x: i + step, y: startPoint },
-  //   });
-  // }
+  // Add top boundry lines
+  for (let i = topLeft.x; i < bottomRight.x; i += step) {
+    gridLines.push({
+      from: { x: i, y: topLeft.y },
+      to: { x: i + step, y: topLeft.y },
+    });
+  }
 
-  // // Add bottom boundry lines
-  // for (let i = startPoint; i < endPoint; i += step) {
-  //   gridLines.push({
-  //     from: { x: i, y: endPoint },
-  //     to: { x: i + step, y: endPoint },
-  //   });
-  // }
+  // Add bottom boundry lines
+  for (let i = topLeft.x; i < bottomRight.x; i += step) {
+    gridLines.push({
+      from: { x: i, y: bottomRight.y },
+      to: { x: i + step, y: bottomRight.y },
+    });
+  }
 
-  // // add horizontal lines
-  // for (let i = startPoint; i < endPoint; i += step) {
-  //   for (let j = startPoint; j < endPoint; j += step) {
-  //     gridLines.push({
-  //       from: { x: i, y: j },
-  //       to: { x: i, y: j + step },
-  //     });
-  //   }
-  // }
+  // add vertical lines
+  for (let i = topLeft.x; i < bottomRight.x; i += step) {
+    for (let j = topLeft.y; j < bottomRight.y; j += step) {
+      gridLines.push({
+        from: { x: i, y: j },
+        to: { x: i, y: j + step },
+      });
+    }
+  }
 
-  // // add vertical lines
-  // for (let i = startPoint; i < endPoint; i += step) {
-  //   for (let j = startPoint; j < endPoint; j += step) {
-  //     gridLines.push({
-  //       from: { x: j, y: i },
-  //       to: { x: j + step, y: i },
-  //     });
-  //   }
-  // }
+  // add horizontal lines
+  for (let i = topLeft.y; i < bottomRight.y; i += step) {
+    for (let j = topLeft.x; j < bottomRight.x; j += step) {
+      gridLines.push({
+        from: { x: j, y: i },
+        to: { x: j + step, y: i },
+      });
+    }
+  }
   console.log(gridLines);
 
   return gridLines;
