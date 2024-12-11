@@ -1,4 +1,4 @@
-import { T_GridLines } from "@/types/types";
+import { T_BoardPoints, T_GridLines } from "@/types/types";
 
 export const generateGridPoints = () => {
   const gridLines: T_GridLines = [];
@@ -9,6 +9,13 @@ export const generateGridPoints = () => {
 
   // Calculate the step size
   const step = (bottomRight.x - topLeft.x) / gridsize;
+
+  calculateBoardCords({
+    boardSize: gridsize,
+    x: topLeft.x,
+    y: topLeft.y,
+    step: step,
+  });
 
   // Add left boundry lines
   for (let i = topLeft.y; i < bottomRight.y; i += step) {
@@ -85,4 +92,27 @@ const generateCenteredBoardPoints = (
 
   // Return the diagonal points (top-left and bottom-right)
   return { topLeft: { x, y }, bottomRight: { x: x2, y: y2 } };
+};
+
+const calculateBoardCords = (args: {
+  x: number;
+  y: number;
+  step: number;
+  boardSize: number;
+}) => {
+  const boardCords: { point: T_BoardPoints; x: number; y: number }[] = [];
+
+  const { x, y, step, boardSize } = args;
+
+  for (let i = 0; i <= boardSize; i++) {
+    for (let j = 0; j <= boardSize; j++) {
+      boardCords.push({
+        point: (i * 10 + j + 1) as T_BoardPoints,
+        x: x + i * step,
+        y: y + j * step,
+      });
+    }
+  }
+
+  console.log(boardCords);
 };
