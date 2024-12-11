@@ -107,7 +107,7 @@ const calculateBoardCords = (args: {
   for (let i = 0; i <= boardSize; i++) {
     for (let j = 0; j <= boardSize; j++) {
       boardCords.push({
-        point: (i * 10 + j + 1) as T_BoardPoints,
+        point: ((i + 1) * 10 + j + 1) as T_BoardPoints,
         x: x + i * step,
         y: y + j * step,
       });
