@@ -3,10 +3,10 @@ import { T_GridLines } from "@/types/types";
 export const generateGridPoints = () => {
   const gridLines: T_GridLines = [];
 
-  const { bottomRight, topLeft } = generateCenteredBoardPoints(500, 500);
+  const { bottomRight, topLeft } = generateCenteredBoardPoints(400, 400);
 
   // Calculate the step size
-  const step = (bottomRight.x - topLeft.x) / 5;
+  const step = (bottomRight.x - topLeft.x) / 4;
 
   // Add left boundry lines
   for (let i = topLeft.y; i < bottomRight.y; i += step) {
