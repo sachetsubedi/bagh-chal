@@ -5,8 +5,10 @@ export const generateGridPoints = () => {
 
   const { bottomRight, topLeft } = generateCenteredBoardPoints(400, 400);
 
+  const gridsize = 4;
+
   // Calculate the step size
-  const step = (bottomRight.x - topLeft.x) / 4;
+  const step = (bottomRight.x - topLeft.x) / gridsize;
 
   // Add left boundry lines
   for (let i = topLeft.y; i < bottomRight.y; i += step) {
