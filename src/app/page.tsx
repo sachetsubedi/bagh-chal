@@ -280,8 +280,8 @@ export default function Home() {
               return (
                 <Image
                   key={idx}
-                  height={50}
-                  width={50}
+                  height={100}
+                  width={100}
                   image={tigerImage}
                   alt="characters"
                   onClick={() => {
@@ -289,22 +289,39 @@ export default function Home() {
                     if (turn === "tiger")
                       setToMove({ character: "tiger", index: idx });
                   }}
+                  cornerRadius={1000}
+                  scale={
+                    toMove?.character === "tiger" && toMove.index === idx
+                      ? { x: 1.01, y: 1.01 }
+                      : { x: 1, y: 1 }
+                  }
+                  sca
+                  shadowColor={
+                    toMove?.character === "tiger" && toMove.index === idx
+                      ? "red"
+                      : undefined
+                  }
+                  shadowEnabled={
+                    toMove?.character === "tiger" && toMove.index === idx
+                  }
+                  shadowOffsetX={3}
+                  shadowOffsetY={5}
                   x={
                     tiger.cord
                       ? (boardPoints.find((e) => {
                           return e.point === tiger.cord;
-                        })?.x || 0) - 25
+                        })?.x || 0) - 50
                       : tiger.x
-                      ? tiger.x - 25
+                      ? tiger.x - 50
                       : 0
                   }
                   y={
                     tiger.cord
                       ? (boardPoints.find((e) => {
                           return e.point === tiger.cord;
-                        })?.y || 0) - 25
+                        })?.y || 0) - 50
                       : tiger.y
-                      ? tiger.y - 25
+                      ? tiger.y - 50
                       : 0
                   }
                 />
@@ -318,26 +335,36 @@ export default function Home() {
               return (
                 <Image
                   key={idx}
-                  height={50}
-                  width={50}
+                  height={80}
+                  width={80}
                   image={goatImage}
                   alt="characters"
+                  shadowColor={
+                    toMove?.character === "goat" && toMove.index === idx
+                      ? "green"
+                      : undefined
+                  }
+                  shadowEnabled={
+                    toMove?.character === "goat" && toMove.index === idx
+                  }
+                  shadowOffsetX={3}
+                  shadowOffsetY={5}
                   x={
                     goats.cord
                       ? (boardPoints.find((e) => {
                           return e.point === goats.cord;
-                        })?.x || 0) - 25
+                        })?.x || 0) - 40
                       : goats.x
-                      ? goats.x - 25
+                      ? goats.x - 40
                       : 0
                   }
                   y={
                     goats.cord
                       ? (boardPoints.find((e) => {
                           return e.point === goats.cord;
-                        })?.y || 0) - 25
+                        })?.y || 0) - 40
                       : goats.y
-                      ? goats.y - 25
+                      ? goats.y - 40
                       : 0
                   }
                   onClick={() => {

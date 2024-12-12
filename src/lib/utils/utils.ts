@@ -3,7 +3,8 @@ import { T_BoardPoints, T_GridLines } from "@/types/types";
 export const generateGridPoints = () => {
   const gridLines: T_GridLines = [];
 
-  const { bottomRight, topLeft } = generateCenteredBoardPoints(400, 400);
+  // Generate centered board points based on the dynamic size
+  const { bottomRight, topLeft } = generateCenteredBoardPoints();
 
   const gridsize = 4;
 
@@ -17,7 +18,7 @@ export const generateGridPoints = () => {
     step: step,
   });
 
-  // Add left boundry lines
+  // Add left boundary lines
   for (let i = topLeft.y; i < bottomRight.y; i += step) {
     gridLines.push({
       from: { x: topLeft.x, y: i },
@@ -25,7 +26,7 @@ export const generateGridPoints = () => {
     });
   }
 
-  // Add right boundry lines
+  // Add right boundary lines
   for (let i = topLeft.y; i < bottomRight.y; i += step) {
     gridLines.push({
       from: { x: bottomRight.x, y: i },
@@ -33,7 +34,7 @@ export const generateGridPoints = () => {
     });
   }
 
-  // Add top boundry lines
+  // Add top boundary lines
   for (let i = topLeft.x; i < bottomRight.x; i += step) {
     gridLines.push({
       from: { x: i, y: topLeft.y },
@@ -41,7 +42,7 @@ export const generateGridPoints = () => {
     });
   }
 
-  // Add bottom boundry lines
+  // Add bottom boundary lines
   for (let i = topLeft.x; i < bottomRight.x; i += step) {
     gridLines.push({
       from: { x: i, y: bottomRight.y },
@@ -49,7 +50,7 @@ export const generateGridPoints = () => {
     });
   }
 
-  // add vertical lines
+  // Add vertical lines
   for (let i = topLeft.x; i < bottomRight.x; i += step) {
     for (let j = topLeft.y; j < bottomRight.y; j += step) {
       gridLines.push({
@@ -59,7 +60,7 @@ export const generateGridPoints = () => {
     }
   }
 
-  // add horizontal lines
+  // Add horizontal lines
   for (let i = topLeft.y; i < bottomRight.y; i += step) {
     for (let j = topLeft.x; j < bottomRight.x; j += step) {
       gridLines.push({
@@ -72,27 +73,34 @@ export const generateGridPoints = () => {
   return { gridLines, boardCords };
 };
 
-// Assuming the board has a fixed width and height, e.g., 600x600
-const generateCenteredBoardPoints = (
-  boardWidth: number,
-  boardHeight: number
-) => {
-  // Get the width and height of the window
+// Generate centered board points based on dynamic width and height
+const generateCenteredBoardPoints = () => {
   const screenWidth = window.innerWidth;
   const screenHeight = window.innerHeight;
 
+  // Determine the base dimension for the grid (height or width)
+  let boardSize;
+  if (screenHeight < screenWidth) {
+    // If height is less than width, set the board size to 80% of the height
+    boardSize = screenHeight * 0.8;
+  } else {
+    // If width is less than height, set the board size to 80% of the width
+    boardSize = screenWidth * 0.8;
+  }
+
   // Calculate the top-left corner (x, y) to center the board
-  const x = (screenWidth - boardWidth) / 2;
-  const y = (screenHeight - boardHeight) / 2;
+  const x = (screenWidth - boardSize) / 2;
+  const y = (screenHeight - boardSize) / 2;
 
   // Calculate the bottom-right corner (x2, y2)
-  const x2 = x + boardWidth;
-  const y2 = y + boardHeight;
+  const x2 = x + boardSize;
+  const y2 = y + boardSize;
 
   // Return the diagonal points (top-left and bottom-right)
   return { topLeft: { x, y }, bottomRight: { x: x2, y: y2 } };
 };
 
+// Calculate the board coordinates based on grid size and step
 const calculateBoardCords = (args: {
   x: number;
   y: number;
