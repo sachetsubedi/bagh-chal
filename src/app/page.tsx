@@ -28,6 +28,7 @@ export default function Home() {
   }, []);
 
   const [prerenderedTigers, setPrerenderedTigers] = useState([11, 15, 51, 55]);
+  const [renderedGoats, setRenderedGoats] = useState<number[]>([]);
 
   const [toMove, setToMove] = useState<{
     character: "goat" | "tiger";
@@ -46,6 +47,7 @@ export default function Home() {
   // Init the images
   const [tigerImage, setTigerImage] = useState<HTMLImageElement>();
   const [goatImage, setGoatImage] = useState<HTMLImageElement>();
+  const [goatsPlaced, setGoatsPlaced] = useState(0);
 
   // Load the images when the component mounts
   useEffect(() => {
@@ -63,10 +65,7 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    console.log({ destination, toMove });
-
     if (destination && toMove) {
-      console.log("HERE");
       const currentLocation = prerenderedTigers;
       currentLocation[toMove.index] = destination;
       setPrerenderedTigers(currentLocation);
@@ -76,8 +75,15 @@ export default function Home() {
     }
   }, [destination, toMove, prerenderedTigers]);
 
+  useEffect(() => {
+    console.log(renderedGoats);
+  }, [renderedGoats]);
+
   return (
     <div>
+      <div className="flex justify-center">
+        <h1>Turn: {turn}</h1>
+      </div>
       <Stage
         width={windowSize.width}
         height={windowSize.height}
@@ -106,6 +112,12 @@ export default function Home() {
                   radius={5}
                   fill="purple"
                   onClick={() => {
+                    if (turn === "goat" && goatsPlaced < 20) {
+                      // const updatedGoats = renderedGoats;
+                      // updatedGoats.push(point.point);
+                      setRenderedGoats([...renderedGoats, point.point]);
+                      setGoatsPlaced(goatsPlaced + 1);
+                    }
                     if (toMove) setDestination(point.point);
                   }}
                 />
@@ -135,6 +147,31 @@ export default function Home() {
                   y={
                     (boardPoints.find((e) => {
                       return e.point === cord;
+                    })?.y || 0) - 25
+                  }
+                />
+              );
+            })}
+
+          {/* TO render goats */}
+
+          {boardPoints &&
+            renderedGoats.map((cords, idx) => {
+              return (
+                <Image
+                  key={idx}
+                  height={50}
+                  width={50}
+                  image={goatImage}
+                  alt="characters"
+                  x={
+                    (boardPoints.find((e) => {
+                      return e.point === cords;
+                    })?.x || 0) - 25
+                  }
+                  y={
+                    (boardPoints.find((e) => {
+                      return e.point === cords;
                     })?.y || 0) - 25
                   }
                 />
