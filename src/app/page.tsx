@@ -27,7 +27,10 @@ export default function Home() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const [prerenderedTigers, setPrerenderedTigers] = useState([11, 15, 51, 55]);
+  const [prerenderedTigers, setPrerenderedTigers] = useState<
+    { cord?: number; x?: number; y?: number }[]
+  >([{ cord: 11 }, { cord: 15 }, { cord: 51 }, { cord: 55 }]);
+
   const [renderedGoats, setRenderedGoats] = useState<number[]>([]);
 
   const [toMove, setToMove] = useState<{
@@ -49,6 +52,72 @@ export default function Home() {
   const [goatImage, setGoatImage] = useState<HTMLImageElement>();
   const [goatsPlaced, setGoatsPlaced] = useState(0);
 
+  const moveCharacter = (
+    from: number,
+    to: number,
+    type: "tiger" | "goat",
+    index: number
+  ) => {
+    if (!boardPoints) return;
+
+    const fromCords = boardPoints.find((e) => e.point === from);
+    const toCords = boardPoints.find((e) => e.point === to);
+
+    if (!fromCords || !toCords) return;
+
+    const dx = toCords.x - fromCords.x;
+    const dy = toCords.y - fromCords.y;
+
+    const stepX = dx * 0.1;
+    const stepY = dy * 0.1;
+
+    if (type === "tiger") {
+      const currentTiger = prerenderedTigers[index];
+
+      const currentCord = boardPoints.find(
+        (e) => e.point === currentTiger.cord
+      );
+
+      if (!currentCord) return;
+
+      // console.log({ currentCord, currentTiger, toCords });
+
+      // remove the cord from the tigers's location (to set custom x and y values slowly)
+      currentTiger.cord = undefined;
+
+      // set the new x and y values
+      // Initialize coordinates if undefined
+      if (!currentTiger.x || !currentTiger.y) {
+        currentTiger.x = currentCord.x;
+        currentTiger.y = currentCord.y;
+      }
+
+      const interval = setInterval(() => {
+        // Just to satisfy ts
+        if (!currentTiger.x || !currentTiger.y) return;
+
+        // Update coordinates step by step
+        if (currentTiger.x !== toCords.x) {
+          // console.log(toCords);
+          currentTiger.x += stepX;
+          currentTiger.y += stepY;
+
+          const newTigersLocations = prerenderedTigers;
+          newTigersLocations[index] = currentTiger;
+          console.log(fromCords, toCords, newTigersLocations);
+
+          setPrerenderedTigers([...newTigersLocations]);
+        } else {
+          // Stop the interval when the target is reached
+          clearInterval(interval);
+
+          // Set the new cord
+          currentTiger.cord = to;
+        }
+      }, 100); // Adjust the interval time (100ms in this case) as needed
+    }
+  };
+
   // Load the images when the component mounts
   useEffect(() => {
     const tigerImg = new window.Image();
@@ -68,8 +137,15 @@ export default function Home() {
     if (destination && toMove) {
       if (toMove.character === "tiger") {
         const currentLocation = prerenderedTigers;
-        currentLocation[toMove.index] = destination;
-        setPrerenderedTigers(currentLocation);
+        // currentLocation[toMove.index].cord = destination;
+        // setPrerenderedTigers(currentLocation);
+
+        moveCharacter(
+          currentLocation[toMove.index].cord!,
+          destination,
+          "tiger",
+          toMove.index
+        );
       } else {
         const currentLocation = renderedGoats;
         currentLocation[toMove.index] = destination;
@@ -132,7 +208,7 @@ export default function Home() {
 
           {/* To prerender the tigers in the corner */}
           {boardPoints &&
-            prerenderedTigers.map((cord, idx) => {
+            prerenderedTigers.map((tiger, idx) => {
               return (
                 <Image
                   key={idx}
@@ -146,14 +222,22 @@ export default function Home() {
                       setToMove({ character: "tiger", index: idx });
                   }}
                   x={
-                    (boardPoints.find((e) => {
-                      return e.point === cord;
-                    })?.x || 0) - 25
+                    tiger.cord
+                      ? (boardPoints.find((e) => {
+                          return e.point === tiger.cord;
+                        })?.x || 0) - 25
+                      : tiger.x
+                      ? tiger.x - 25
+                      : 0
                   }
                   y={
-                    (boardPoints.find((e) => {
-                      return e.point === cord;
-                    })?.y || 0) - 25
+                    tiger.cord
+                      ? (boardPoints.find((e) => {
+                          return e.point === tiger.cord;
+                        })?.y || 0) - 25
+                      : tiger.y
+                      ? tiger.y - 25
+                      : 0
                   }
                 />
               );
@@ -200,7 +284,7 @@ export default function Home() {
       </button>
       <button
         onClick={() => {
-          setPrerenderedTigers([22, 25, 51, 55]);
+          // setPrerenderedTigers([22, 25, 51, 55]);
         }}
       >
         Change location
