@@ -66,10 +66,15 @@ export default function Home() {
 
   useEffect(() => {
     if (destination && toMove) {
-      const currentLocation = prerenderedTigers;
-      currentLocation[toMove.index] = destination;
-      setPrerenderedTigers(currentLocation);
-
+      if (toMove.character === "tiger") {
+        const currentLocation = prerenderedTigers;
+        currentLocation[toMove.index] = destination;
+        setPrerenderedTigers(currentLocation);
+      } else {
+        const currentLocation = renderedGoats;
+        currentLocation[toMove.index] = destination;
+        setRenderedGoats(currentLocation);
+      }
       setDestination(undefined);
       setToMove(undefined);
       setTurn(turn === "goat" ? "tiger" : "goat");
@@ -110,12 +115,11 @@ export default function Home() {
                   key={idx}
                   x={point.x}
                   y={point.y}
-                  radius={5}
-                  fill="purple"
+                  radius={15}
+                  // fill="purple"
                   onClick={() => {
                     if (turn === "goat" && goatsPlaced < 20) {
-                      // const updatedGoats = renderedGoats;
-                      // updatedGoats.push(point.point);
+                      // If the turn and all goats are not placed, then place the goat
                       setRenderedGoats([...renderedGoats, point.point]);
                       setGoatsPlaced(goatsPlaced + 1);
                       setTurn("tiger");
@@ -176,6 +180,11 @@ export default function Home() {
                       return e.point === cords;
                     })?.y || 0) - 25
                   }
+                  onClick={() => {
+                    if (turn === "goat" && goatsPlaced >= 20) {
+                      setToMove({ character: "goat", index: idx });
+                    }
+                  }}
                 />
               );
             })}
