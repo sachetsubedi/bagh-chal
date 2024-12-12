@@ -4,7 +4,7 @@ import Coins from "@/components/Coins";
 import { generateGridPoints } from "@/lib/utils/utils";
 import { T_BoardPoints, T_GridLines } from "@/types/types";
 import { useEffect, useState } from "react";
-import { Image, Layer, Line, Stage } from "react-konva";
+import { Circle, Image, Layer, Line, Stage } from "react-konva";
 
 export default function Home() {
   const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
@@ -23,7 +23,14 @@ export default function Home() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const prerenderedTigers = [11, 15, 51, 55];
+  const [prerenderedTigers, setPrerenderedTigers] = useState([11, 15, 51, 55]);
+
+  const [toMove, setToMove] = useState<{
+    character: "goat" | "tiger";
+    index: number;
+  }>();
+
+  const [destination, setDestination] = useState<number>();
 
   // generateGridPoints();
   const [gridLines, setGridLines] = useState<T_GridLines>();
@@ -50,6 +57,20 @@ export default function Home() {
     };
   }, []);
 
+  useEffect(() => {
+    console.log({ destination, toMove });
+
+    if (destination && toMove) {
+      console.log("HERE");
+      const currentLocation = prerenderedTigers;
+      currentLocation[toMove.index] = destination;
+      setPrerenderedTigers(currentLocation);
+
+      setDestination(undefined);
+      setToMove(undefined);
+    }
+  }, [destination, toMove, prerenderedTigers]);
+
   return (
     <div>
       <Stage
@@ -69,30 +90,36 @@ export default function Home() {
             );
           })}
 
-          {/* <Image height={100} width={100} image={image} alt="characters" /> */}
+          {/* To set corner points */}
+          {boardPoints &&
+            boardPoints.map((point, idx) => {
+              return (
+                <Circle
+                  key={idx}
+                  x={point.x}
+                  y={point.y}
+                  radius={5}
+                  fill="purple"
+                  onClick={() => {
+                    if (toMove) setDestination(point.point);
+                  }}
+                />
+              );
+            })}
+
+          {/* To prerender the tigers in the corner */}
           {boardPoints &&
             prerenderedTigers.map((cord, idx) => {
               return (
-                // <Coins
-                //   key={cord}
-                //   type="tiger"
-                //   x={
-                //     boardPoints.find((e) => {
-                //       return e.point === cord;
-                //     })?.x || 0
-                //   }
-                //   y={
-                //     boardPoints.find((e) => {
-                //       return e.point === cord;
-                //     })?.y || 0
-                //   }
-                // />
                 <Image
                   key={idx}
                   height={50}
                   width={50}
                   image={tigerImage}
                   alt="characters"
+                  onClick={() => {
+                    setToMove({ character: "tiger", index: idx });
+                  }}
                   x={
                     (boardPoints.find((e) => {
                       return e.point === cord;
@@ -115,6 +142,13 @@ export default function Home() {
         }}
       >
         Generate
+      </button>
+      <button
+        onClick={() => {
+          setPrerenderedTigers([22, 25, 51, 55]);
+        }}
+      >
+        Change location
       </button>
       {boardPoints?.map((point, idx) => {
         return (

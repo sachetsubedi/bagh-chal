@@ -29,3 +29,5 @@ export type T_BoardPoints =
   | 53
   | 54
   | 55;
+
+export type T_Cords = { x: number; y: number };
