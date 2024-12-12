@@ -72,6 +72,7 @@ export default function Home() {
 
       setDestination(undefined);
       setToMove(undefined);
+      setTurn(turn === "goat" ? "tiger" : "goat");
     }
   }, [destination, toMove, prerenderedTigers]);
 
@@ -117,6 +118,7 @@ export default function Home() {
                       // updatedGoats.push(point.point);
                       setRenderedGoats([...renderedGoats, point.point]);
                       setGoatsPlaced(goatsPlaced + 1);
+                      setTurn("tiger");
                     }
                     if (toMove) setDestination(point.point);
                   }}
