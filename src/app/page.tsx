@@ -31,7 +31,11 @@ export default function Home() {
     { cord?: number; x?: number; y?: number }[]
   >([{ cord: 11 }, { cord: 15 }, { cord: 51 }, { cord: 55 }]);
 
-  const [renderedGoats, setRenderedGoats] = useState<number[]>([]);
+  // const [renderedGoats, setRenderedGoats] = useState<number[]>([]);
+
+  const [renderedGoats, setRenderedGoats] = useState<
+    { cord?: number; x?: number; y?: number }[]
+  >([]);
 
   const [toMove, setToMove] = useState<{
     character: "goat" | "tiger";
@@ -68,8 +72,10 @@ export default function Home() {
     const dx = toCords.x - fromCords.x;
     const dy = toCords.y - fromCords.y;
 
-    const stepX = dx * 0.1;
-    const stepY = dy * 0.1;
+    const stepX = dx * 0.01;
+    const stepY = dy * 0.01;
+
+    const epsilon = 0.5; // Small tolerance value
 
     if (type === "tiger") {
       const currentTiger = prerenderedTigers[index];
@@ -80,12 +86,9 @@ export default function Home() {
 
       if (!currentCord) return;
 
-      // console.log({ currentCord, currentTiger, toCords });
-
-      // remove the cord from the tigers's location (to set custom x and y values slowly)
+      // Remove the cord from the tiger's location
       currentTiger.cord = undefined;
 
-      // set the new x and y values
       // Initialize coordinates if undefined
       if (!currentTiger.x || !currentTiger.y) {
         currentTiger.x = currentCord.x;
@@ -93,18 +96,21 @@ export default function Home() {
       }
 
       const interval = setInterval(() => {
-        // Just to satisfy ts
-        if (!currentTiger.x || !currentTiger.y) return;
+        if (!currentTiger.x || !currentTiger.y) {
+          currentTiger.x = currentCord.x;
+          currentTiger.y = currentCord.y;
+        }
 
         // Update coordinates step by step
-        if (currentTiger.x !== toCords.x) {
-          // console.log(toCords);
+        if (
+          Math.abs(currentTiger.x - toCords.x) > epsilon ||
+          Math.abs(currentTiger.y - toCords.y) > epsilon
+        ) {
           currentTiger.x += stepX;
           currentTiger.y += stepY;
 
           const newTigersLocations = prerenderedTigers;
           newTigersLocations[index] = currentTiger;
-          console.log(fromCords, toCords, newTigersLocations);
 
           setPrerenderedTigers([...newTigersLocations]);
         } else {
@@ -112,9 +118,67 @@ export default function Home() {
           clearInterval(interval);
 
           // Set the new cord
+          const newTigersLocations = prerenderedTigers;
+          newTigersLocations[index] = currentTiger;
           currentTiger.cord = to;
+
+          // Clear the x and y values
+          currentTiger.x = undefined;
+          currentTiger.y = undefined;
+
+          setPrerenderedTigers([...newTigersLocations]);
         }
-      }, 100); // Adjust the interval time (100ms in this case) as needed
+      }, 1);
+    } else if (type === "goat") {
+      const currentGoat = renderedGoats[index];
+
+      const currentCord = boardPoints.find((e) => e.point === currentGoat.cord);
+
+      if (!currentCord) return;
+
+      // Remove the cord from the tiger's location
+      currentGoat.cord = undefined;
+
+      // Initialize coordinates if undefined
+      if (!currentGoat.x || !currentGoat.y) {
+        currentGoat.x = currentCord.x;
+        currentGoat.y = currentCord.y;
+      }
+
+      const interval = setInterval(() => {
+        if (!currentGoat.x || !currentGoat.y) {
+          currentGoat.x = currentCord.x;
+          currentGoat.y = currentCord.y;
+        }
+
+        // Update coordinates step by step
+        if (
+          Math.abs(currentGoat.x - toCords.x) > epsilon ||
+          Math.abs(currentGoat.y - toCords.y) > epsilon
+        ) {
+          currentGoat.x += stepX;
+          currentGoat.y += stepY;
+
+          const newGoatsLocation = renderedGoats;
+          newGoatsLocation[index] = currentGoat;
+
+          setRenderedGoats([...newGoatsLocation]);
+        } else {
+          // Stop the interval when the target is reached
+          clearInterval(interval);
+
+          // Set the new cord
+          const newGoatsLocation = renderedGoats;
+          newGoatsLocation[index] = currentGoat;
+          currentGoat.cord = to;
+
+          // Clear the x and y values
+          currentGoat.x = undefined;
+          currentGoat.y = undefined;
+
+          setRenderedGoats([...newGoatsLocation]);
+        }
+      }, 0.5);
     }
   };
 
@@ -148,18 +212,20 @@ export default function Home() {
         );
       } else {
         const currentLocation = renderedGoats;
-        currentLocation[toMove.index] = destination;
-        setRenderedGoats(currentLocation);
+        // currentLocation[toMove.index] = destination;
+        // setRenderedGoats(currentLocation);
+        moveCharacter(
+          currentLocation[toMove.index].cord!,
+          destination,
+          "goat",
+          toMove.index
+        );
       }
       setDestination(undefined);
       setToMove(undefined);
       setTurn(turn === "goat" ? "tiger" : "goat");
     }
   }, [destination, toMove, prerenderedTigers]);
-
-  useEffect(() => {
-    console.log(renderedGoats);
-  }, [renderedGoats]);
 
   return (
     <div>
@@ -196,7 +262,10 @@ export default function Home() {
                   onClick={() => {
                     if (turn === "goat" && goatsPlaced < 20) {
                       // If the turn and all goats are not placed, then place the goat
-                      setRenderedGoats([...renderedGoats, point.point]);
+                      setRenderedGoats([
+                        ...renderedGoats,
+                        { cord: point.point },
+                      ]);
                       setGoatsPlaced(goatsPlaced + 1);
                       setTurn("tiger");
                     }
@@ -246,7 +315,7 @@ export default function Home() {
           {/* TO render goats */}
 
           {boardPoints &&
-            renderedGoats.map((cords, idx) => {
+            renderedGoats.map((goats, idx) => {
               return (
                 <Image
                   key={idx}
@@ -255,14 +324,22 @@ export default function Home() {
                   image={goatImage}
                   alt="characters"
                   x={
-                    (boardPoints.find((e) => {
-                      return e.point === cords;
-                    })?.x || 0) - 25
+                    goats.cord
+                      ? (boardPoints.find((e) => {
+                          return e.point === goats.cord;
+                        })?.x || 0) - 25
+                      : goats.x
+                      ? goats.x - 25
+                      : 0
                   }
                   y={
-                    (boardPoints.find((e) => {
-                      return e.point === cords;
-                    })?.y || 0) - 25
+                    goats.cord
+                      ? (boardPoints.find((e) => {
+                          return e.point === goats.cord;
+                        })?.y || 0) - 25
+                      : goats.y
+                      ? goats.y - 25
+                      : 0
                   }
                   onClick={() => {
                     if (turn === "goat" && goatsPlaced >= 20) {
