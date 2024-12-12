@@ -1,6 +1,5 @@
 "use client";
 
-import Coins from "@/components/Coins";
 import { generateGridPoints } from "@/lib/utils/utils";
 import { T_BoardPoints, T_GridLines } from "@/types/types";
 import { useEffect, useState } from "react";
@@ -366,16 +365,6 @@ export default function Home() {
       >
         Change location
       </button>
-      {boardPoints?.map((point, idx) => {
-        return (
-          <Coins
-            key={idx}
-            type={[11, 15, 51, 55].includes(point.point) ? "tiger" : "goat"}
-            x={point.x}
-            y={point.y}
-          />
-        );
-      })}
     </div>
   );
 }
