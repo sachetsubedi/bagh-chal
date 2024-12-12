@@ -7,7 +7,11 @@ import { useEffect, useState } from "react";
 import { Circle, Image, Layer, Line, Stage } from "react-konva";
 
 export default function Home() {
+  // To get the window size
   const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
+
+  // To keep track of the turn
+  const [turn, setTurn] = useState<"goat" | "tiger">("goat");
 
   useEffect(() => {
     function handleResize() {
@@ -30,6 +34,7 @@ export default function Home() {
     index: number;
   }>();
 
+  // To set the destination of the character
   const [destination, setDestination] = useState<number>();
 
   // generateGridPoints();
@@ -118,7 +123,9 @@ export default function Home() {
                   image={tigerImage}
                   alt="characters"
                   onClick={() => {
-                    setToMove({ character: "tiger", index: idx });
+                    // If the turn is tiger, then the tiger can move
+                    if (turn === "tiger")
+                      setToMove({ character: "tiger", index: idx });
                   }}
                   x={
                     (boardPoints.find((e) => {
