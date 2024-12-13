@@ -284,13 +284,14 @@ export default function Home() {
                         toMove.index,
                         toMove.character
                       );
+                      console.log(point.point);
 
                       if (
                         isValidMove({
-                          from: currentPosition ?? 0,
-                          to: point.point ?? 0,
-                          gridLines: gridLines ?? [],
-                          boardPoints: boardPoints ?? [],
+                          from: currentPosition as T_BoardPoints,
+                          to: point?.point,
+                          gridLines: gridLines!,
+                          boardPoints: boardPoints!,
                         })
                       ) {
                         console.log("ius valid");
@@ -407,7 +408,7 @@ export default function Home() {
       </Stage>
       <button
         onClick={() => {
-          setGridLines(generateGridPoints()?.gridLines);
+          setGridLines(generateGridPoints()?.choppedLines);
           setBoardPoints(generateGridPoints()?.boardCords);
         }}
       >

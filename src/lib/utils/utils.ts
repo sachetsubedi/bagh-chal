@@ -120,7 +120,10 @@ export const generateGridPoints = () => {
     to: { x: topCenter.x, y: topCenter.y },
   });
 
-  return { gridLines, boardCords };
+  // Chop the lines into smaller segments
+  const choppedLines = chopLines(gridLines, step);
+  console.log(choppedLines);
+  return { choppedLines, boardCords };
 };
 
 // Generate centered board points based on dynamic width and height
@@ -174,9 +177,11 @@ const calculateBoardCords = (args: {
   return boardCords;
 };
 
+// type T_MoveArgs = { from: number; to: number };
+
 export const isValidMove = (args: {
-  from: number;
-  to: number;
+  from: T_BoardPoints;
+  to: T_BoardPoints;
   gridLines: T_GridLines;
   boardPoints: { point: T_BoardPoints; x: number; y: number }[];
 }) => {
@@ -202,4 +207,55 @@ export const isValidMove = (args: {
 
   if (isInGridLine) return true;
   return false;
+};
+
+type Point = { x: number; y: number };
+type Line = { from: Point; to: Point };
+
+const chopLines = (lines: Line[], segmentSize: number) => {
+  const choppedLines: Line[] = [];
+
+  lines.forEach((line) => {
+    choppedLines.push(...chopLine(line, segmentSize));
+  });
+
+  return choppedLines;
+};
+
+const chopLine = (line: Line, segmentSize: number): Line[] => {
+  const { from, to } = line;
+
+  // Calculate the direction vector (difference between points)
+  const dx = to.x - from.x;
+  const dy = to.y - from.y;
+
+  // Calculate the total length of the line
+  const length = Math.sqrt(dx * dx + dy * dy);
+
+  // Calculate the number of segments
+  const numSegments = Math.ceil(length / segmentSize);
+
+  // Calculate the unit vector (direction normalized to 1)
+  const unitX = dx / length;
+  const unitY = dy / length;
+
+  const segments: Line[] = [];
+
+  for (let i = 0; i < numSegments; i++) {
+    const start = {
+      x: from.x + unitX * segmentSize * i,
+      y: from.y + unitY * segmentSize * i,
+    };
+    const end =
+      i === numSegments - 1
+        ? to // Ensure the last segment ends exactly at the 'to' point
+        : {
+            x: from.x + unitX * segmentSize * (i + 1),
+            y: from.y + unitY * segmentSize * (i + 1),
+          };
+
+    segments.push({ from: start, to: end });
+  }
+
+  return segments;
 };
