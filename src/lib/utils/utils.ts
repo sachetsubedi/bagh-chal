@@ -1,4 +1,5 @@
 import { T_BoardPoints, T_GridLines } from "@/types/types";
+import { diagonalValidMoves } from "../data";
 
 export const generateGridPoints = () => {
   const gridLines: T_GridLines = [];
@@ -97,8 +98,6 @@ export const generateGridPoints = () => {
   // just to satisfy the typescript
   if (!topCenter || !bottomCenter || !leftCenter || !rightCenter) return;
 
-  console.log(topCenter, bottomCenter, leftCenter, rightCenter);
-
   // // Add the lines
   gridLines.push({
     from: { x: topCenter.x, y: topCenter.y },
@@ -122,7 +121,6 @@ export const generateGridPoints = () => {
 
   // Chop the lines into smaller segments
   const choppedLines = chopLines(gridLines, step);
-  console.log(choppedLines);
   return { choppedLines, boardCords };
 };
 
@@ -187,6 +185,15 @@ export const isValidMove = (args: {
 }) => {
   const { from, to, gridLines, boardPoints } = args;
 
+  // Check in predefined valid moves for diagonal paths
+  const isValid = diagonalValidMoves.find((move) => {
+    return (
+      (move.from == from && move.to == to) ||
+      (move.from == to && move.to == from)
+    );
+  });
+  if (isValid) return true;
+
   const isInGridLine = gridLines.find((line) => {
     const lineFromCord = boardPoints.find((point) => {
       return point.x == line.from.x && point.y == line.from.y;
@@ -196,7 +203,6 @@ export const isValidMove = (args: {
       return point.x == line.to.x && point.y == line.to.y;
     });
 
-    console.log({ lineFromCord, lineToCord }, from, to);
     if (!lineFromCord || !lineToCord) return false;
 
     return (

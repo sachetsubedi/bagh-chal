@@ -284,7 +284,6 @@ export default function Home() {
                         toMove.index,
                         toMove.character
                       );
-                      console.log(point.point);
 
                       if (
                         isValidMove({

@@ -1,0 +1,18 @@
+export const diagonalValidMoves: { from: number; to: number }[] = [
+  { from: 11, to: 22 },
+  { from: 22, to: 33 },
+  { from: 33, to: 44 },
+  { from: 44, to: 55 },
+  { from: 15, to: 24 },
+  { from: 24, to: 33 },
+  { from: 33, to: 42 },
+  { from: 42, to: 51 },
+  { from: 13, to: 11 },
+  { from: 11, to: 31 },
+  { from: 31, to: 42 },
+  { from: 42, to: 53 },
+  { from: 53, to: 44 },
+  { from: 44, to: 35 },
+  { from: 35, to: 24 },
+  { from: 24, to: 13 },
+];
