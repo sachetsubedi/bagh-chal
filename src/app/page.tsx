@@ -224,7 +224,7 @@ export default function Home() {
       setToMove(undefined);
       setTurn(turn === "goat" ? "tiger" : "goat");
     }
-  }, [destination, toMove, prerenderedTigers]);
+  }, [destination, toMove, prerenderedTigers, renderedGoats]);
 
   return (
     <div>

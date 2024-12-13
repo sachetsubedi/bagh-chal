@@ -49,26 +49,40 @@ export const generateGridPoints = () => {
       to: { x: i + step, y: bottomRight.y },
     });
   }
+  // Add horizontal lines
+  for (let i = 0; i < gridsize; i++) {
+    const y = topLeft.y + i * step;
+    gridLines.push({
+      from: { x: topLeft.x, y },
+      to: { x: bottomRight.x, y },
+    });
+  }
 
   // Add vertical lines
-  for (let i = topLeft.x; i < bottomRight.x; i += step) {
-    for (let j = topLeft.y; j < bottomRight.y; j += step) {
-      gridLines.push({
-        from: { x: i, y: j },
-        to: { x: i, y: j + step },
-      });
-    }
+  for (let i = 0; i < gridsize; i++) {
+    const x = topLeft.x + i * step;
+    gridLines.push({
+      from: { x, y: topLeft.y },
+      to: { x, y: bottomRight.y },
+    });
   }
 
-  // Add horizontal lines
-  for (let i = topLeft.y; i < bottomRight.y; i += step) {
-    for (let j = topLeft.x; j < bottomRight.x; j += step) {
-      gridLines.push({
-        from: { x: j, y: i },
-        to: { x: j + step, y: i },
-      });
-    }
-  }
+  // Add the diagonal lines
+  // gridLines.push({
+  //   from: { x: topLeft.x, y: topLeft.y },
+  //   to: { x: bottomRight.x, y: bottomRight.y },
+  // });
+
+  // // Add the diagonal lines
+  // gridLines.push({
+  //   from: { x: topLeft.x, y: bottomRight.y },
+  //   to: { x: bottomRight.x, y: topLeft.y },
+  // });
+
+  // add the square in the grid
+  // calculate the center of the each side
+  // const topCenter = gridLines.find((line)=>{return line.})
+  console.log(gridLines);
 
   return { gridLines, boardCords };
 };
@@ -123,3 +137,5 @@ const calculateBoardCords = (args: {
 
   return boardCords;
 };
+
+const isValidMove = (args: { from: number; to: number }) => {};
