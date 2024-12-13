@@ -120,8 +120,6 @@ export const generateGridPoints = () => {
     to: { x: topCenter.x, y: topCenter.y },
   });
 
-  console.log(gridLines);
-
   return { gridLines, boardCords };
 };
 
@@ -176,4 +174,32 @@ const calculateBoardCords = (args: {
   return boardCords;
 };
 
-const isValidMove = (args: { from: number; to: number }) => {};
+export const isValidMove = (args: {
+  from: number;
+  to: number;
+  gridLines: T_GridLines;
+  boardPoints: { point: T_BoardPoints; x: number; y: number }[];
+}) => {
+  const { from, to, gridLines, boardPoints } = args;
+
+  const isInGridLine = gridLines.find((line) => {
+    const lineFromCord = boardPoints.find((point) => {
+      return point.x == line.from.x && point.y == line.from.y;
+    });
+
+    const lineToCord = boardPoints.find((point) => {
+      return point.x == line.to.x && point.y == line.to.y;
+    });
+
+    console.log({ lineFromCord, lineToCord }, from, to);
+    if (!lineFromCord || !lineToCord) return false;
+
+    return (
+      (lineFromCord?.point == from && lineToCord.point == to) ||
+      (lineFromCord?.point == to && lineToCord.point == from)
+    );
+  });
+
+  if (isInGridLine) return true;
+  return false;
+};

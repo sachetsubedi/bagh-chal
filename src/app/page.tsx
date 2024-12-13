@@ -1,6 +1,6 @@
 "use client";
 
-import { generateGridPoints } from "@/lib/utils/utils";
+import { generateGridPoints, isValidMove } from "@/lib/utils/utils";
 import { T_BoardPoints, T_GridLines } from "@/types/types";
 import { useEffect, useState } from "react";
 import { Circle, Image, Layer, Line, Stage } from "react-konva";
@@ -181,6 +181,17 @@ export default function Home() {
     }
   };
 
+  const getCurrentPosition = (index: number, type: "tiger" | "goat") => {
+    if (type === "tiger") {
+      const tiger = prerenderedTigers[index];
+      console.log(index, type);
+      return tiger.cord;
+    } else {
+      const goat = renderedGoats[index];
+      return goat.cord;
+    }
+  };
+
   // Load the images when the component mounts
   useEffect(() => {
     const tigerImg = new window.Image();
@@ -268,7 +279,24 @@ export default function Home() {
                       setGoatsPlaced(goatsPlaced + 1);
                       setTurn("tiger");
                     }
-                    if (toMove) setDestination(point.point);
+                    if (toMove) {
+                      const currentPosition = getCurrentPosition(
+                        toMove.index,
+                        toMove.character
+                      );
+
+                      if (
+                        isValidMove({
+                          from: currentPosition ?? 0,
+                          to: point.point ?? 0,
+                          gridLines: gridLines ?? [],
+                          boardPoints: boardPoints ?? [],
+                        })
+                      ) {
+                        console.log("ius valid");
+                        setDestination(point.point);
+                      }
+                    }
                   }}
                 />
               );
@@ -379,8 +407,8 @@ export default function Home() {
       </Stage>
       <button
         onClick={() => {
-          setGridLines(generateGridPoints().gridLines);
-          setBoardPoints(generateGridPoints().boardCords);
+          setGridLines(generateGridPoints()?.gridLines);
+          setBoardPoints(generateGridPoints()?.boardCords);
         }}
       >
         Generate
