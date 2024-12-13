@@ -68,20 +68,58 @@ export const generateGridPoints = () => {
   }
 
   // Add the diagonal lines
-  // gridLines.push({
-  //   from: { x: topLeft.x, y: topLeft.y },
-  //   to: { x: bottomRight.x, y: bottomRight.y },
-  // });
+  gridLines.push({
+    from: { x: topLeft.x, y: topLeft.y },
+    to: { x: bottomRight.x, y: bottomRight.y },
+  });
 
-  // // Add the diagonal lines
-  // gridLines.push({
-  //   from: { x: topLeft.x, y: bottomRight.y },
-  //   to: { x: bottomRight.x, y: topLeft.y },
-  // });
+  // Add the diagonal lines
+  gridLines.push({
+    from: { x: topLeft.x, y: bottomRight.y },
+    to: { x: bottomRight.x, y: topLeft.y },
+  });
 
   // add the square in the grid
   // calculate the center of the each side
-  // const topCenter = gridLines.find((line)=>{return line.})
+  const leftCenter = boardCords.find((point) => {
+    return point.point === 13;
+  });
+  const topCenter = boardCords.find((point) => {
+    return point.point === 31;
+  });
+  const rightCenter = boardCords.find((point) => {
+    return point.point === 53;
+  });
+  const bottomCenter = boardCords.find((point) => {
+    return point.point === 35;
+  });
+
+  // just to satisfy the typescript
+  if (!topCenter || !bottomCenter || !leftCenter || !rightCenter) return;
+
+  console.log(topCenter, bottomCenter, leftCenter, rightCenter);
+
+  // // Add the lines
+  gridLines.push({
+    from: { x: topCenter.x, y: topCenter.y },
+    to: { x: leftCenter.x, y: leftCenter.y },
+  });
+
+  gridLines.push({
+    from: { x: leftCenter.x, y: leftCenter.y },
+    to: { x: bottomCenter.x, y: bottomCenter.y },
+  });
+
+  gridLines.push({
+    from: { x: bottomCenter.x, y: bottomCenter.y },
+    to: { x: rightCenter.x, y: rightCenter.y },
+  });
+
+  gridLines.push({
+    from: { x: rightCenter.x, y: rightCenter.y },
+    to: { x: topCenter.x, y: topCenter.y },
+  });
+
   console.log(gridLines);
 
   return { gridLines, boardCords };
