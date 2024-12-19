@@ -187,7 +187,7 @@ export const isValidMove = (args: {
   step: number;
   character: "tiger" | "goat";
   renderedGoats: { cord?: number; x?: number; y?: number }[];
-}) => {
+}): { valid: boolean; goatKilled?: number } => {
   const { from, to, gridLines, boardPoints, step } = args;
 
   // Firstly check if the mover is tiger and check if there is a kill
@@ -199,6 +199,16 @@ export const isValidMove = (args: {
       return point.point == to;
     });
 
+    const choppedPathCustom = chopLineCustom(
+      {
+        from: { x: startCords?.x ?? 0, y: startCords?.y ?? 0 },
+        to: { x: endCords?.x ?? 0, y: endCords?.y ?? 0 },
+      },
+      step
+    );
+
+    console.log(choppedPathCustom);
+
     const choppedPath = chopLine(
       {
         from: { x: startCords?.x ?? 0, y: startCords?.y ?? 0 },
@@ -206,7 +216,8 @@ export const isValidMove = (args: {
       },
       step
     );
-    console.log(choppedPath.length);
+
+    // console.log(choppedPath.length);
 
     if (choppedPath.length === 2) {
       // means there is a point gap between the two cords
@@ -221,12 +232,18 @@ export const isValidMove = (args: {
         );
       });
 
-      console.log(middleCord);
       const isGoatInMiddle = args.renderedGoats.find((goat) => {
         return goat.cord == middleCord?.point;
       });
-      console.log(isGoatInMiddle);
-      if (isGoatInMiddle) return true;
+
+      // Get the index of killed goat
+      if (isGoatInMiddle) {
+        const killedGoat = args.renderedGoats.findIndex((goat) => {
+          return goat.cord == isGoatInMiddle.cord;
+        });
+
+        return { valid: true, goatKilled: killedGoat };
+      }
     }
   }
 
@@ -237,7 +254,7 @@ export const isValidMove = (args: {
     (from == 31 && to == 51) ||
     (from == 51 && to == 31)
   )
-    return false;
+    return { valid: false, goatKilled: undefined };
 
   // Check in predefined valid moves for diagonal paths
   const isValid = diagonalValidMoves.find((move) => {
@@ -246,7 +263,7 @@ export const isValidMove = (args: {
       (move.from == to && move.to == from)
     );
   });
-  if (isValid) return true;
+  if (isValid) return { valid: true };
 
   const isInGridLine = gridLines.find((line) => {
     const lineFromCord = boardPoints.find((point) => {
@@ -265,8 +282,8 @@ export const isValidMove = (args: {
     );
   });
 
-  if (isInGridLine) return true;
-  return false;
+  if (isInGridLine) return { valid: true };
+  return { valid: false };
 };
 
 type Point = { x: number; y: number };
@@ -281,45 +298,137 @@ const chopLines = (lines: Line[], segmentSize: number) => {
 
   return choppedLines;
 };
-const chopLine = (line: Line, segmentSize: number): Line[] => {
+
+const chopLine = (
+  line: Line,
+  segmentSize: number,
+  tolerance: number = 50
+): Line[] => {
   const { from, to } = line;
 
-  // Calculate the direction vector (difference between points)
+  // Calculate the differences in x and y coordinates
   const dx = to.x - from.x;
   const dy = to.y - from.y;
 
-  // Calculate the total length of the line
-  const length = Math.sqrt(dx * dx + dy * dy);
+  // Calculate the diagonal length (the hypotenuse in this case)
+  const diagonalLength = Math.sqrt(dx * dx + dy * dy);
 
   // Handle the case where the line length is 0
-  if (length === 0) {
+  if (diagonalLength === 0) {
     return [{ from, to }];
   }
 
-  // Calculate the number of segments
-  const numSegments = Math.max(1, Math.ceil(length / segmentSize));
+  // Calculate the number of full segments based on the diagonal length
+  const numSegments = Math.floor(diagonalLength / segmentSize);
 
-  // Calculate the unit vector (direction normalized to 1)
-  const unitX = dx / length;
-  const unitY = dy / length;
+  // Calculate the remaining distance after full segments
+  const remainingDistance = diagonalLength - numSegments * segmentSize;
 
   const segments: Line[] = [];
 
+  // Create full segments
   for (let i = 0; i < numSegments; i++) {
     const start = {
-      x: from.x + unitX * segmentSize * i,
-      y: from.y + unitY * segmentSize * i,
+      x: from.x + (dx / diagonalLength) * segmentSize * i,
+      y: from.y + (dy / diagonalLength) * segmentSize * i,
     };
-    const end =
-      i === numSegments - 1
-        ? to // Ensure the last segment ends exactly at the 'to' point
-        : {
-            x: from.x + unitX * segmentSize * (i + 1),
-            y: from.y + unitY * segmentSize * (i + 1),
-          };
-
+    const end = {
+      x: from.x + (dx / diagonalLength) * segmentSize * (i + 1),
+      y: from.y + (dy / diagonalLength) * segmentSize * (i + 1),
+    };
     segments.push({ from: start, to: end });
   }
-  console.log("segments", segments);
+
+  // Handle the last segment, ensuring no extra segment is created
+  if (remainingDistance > tolerance) {
+    const start = {
+      x: from.x + (dx / diagonalLength) * segmentSize * numSegments,
+      y: from.y + (dy / diagonalLength) * segmentSize * numSegments,
+    };
+    const end = to; // Ensure the last segment ends exactly at 'to'
+    segments.push({ from: start, to: end });
+  }
+  // console.log(segments);
   return segments;
+};
+
+const chopLineCustom = (line: Line, segmentSize: number) => {
+  // console.log(line, segmentSize);
+
+  const segments: Line[] = [];
+
+  const dx = line.to.x - line.from.x; // Get the absolute difference in x
+  const dy = line.to.y - line.from.y; // Get the absolute difference in y
+
+  // check if it is a diagonal line
+  if (isDiagonalLine(line)) {
+    const noOfSegments = Math.floor(Math.abs(dx) / segmentSize);
+    for (let i = 0; i < noOfSegments; i++) {
+      const start = {
+        x: line.from.x + (dx / Math.abs(dx)) * segmentSize * i,
+        y: line.from.y + (dy / Math.abs(dy)) * segmentSize * i,
+      };
+
+      const end = {
+        x: line.from.x + (dx / Math.abs(dx)) * segmentSize * (i + 1),
+        y: line.from.y + (dy / Math.abs(dy)) * segmentSize * (i + 1),
+      };
+
+      segments.push({ from: start, to: end });
+    }
+
+    return segments;
+  } else if (isHorizontalLine(line)) {
+    const noOfSegments = Math.floor(Math.abs(dx) / segmentSize);
+    console.log(noOfSegments);
+
+    for (let i = 0; i < noOfSegments; i++) {
+      const start = {
+        x: line.from.x + (dx / Math.abs(dx)) * segmentSize * i,
+        y: line.from.y,
+      };
+
+      const end = {
+        x: line.from.x + (dx / Math.abs(dx)) * segmentSize * (i + 1),
+        y: line.from.y,
+      };
+
+      segments.push({ from: start, to: end });
+    }
+
+    return segments;
+  } else {
+    const noOfSegments = Math.floor(Math.abs(dy) / segmentSize);
+    console.log(noOfSegments);
+
+    for (let i = 0; i < noOfSegments; i++) {
+      const start = {
+        x: line.from.x,
+        y: line.from.y + (dy / Math.abs(dy)) * segmentSize * i,
+      };
+
+      const end = {
+        x: line.from.x,
+        y: line.from.y + (dy / Math.abs(dy)) * segmentSize * (i + 1),
+      };
+
+      segments.push({ from: start, to: end });
+    }
+
+    return segments;
+  }
+};
+
+const isDiagonalLine = (line: Line) => {
+  if (line.from.x === line.to.x || line.from.y === line.to.y) {
+    return false;
+  }
+  return true;
+};
+
+const isHorizontalLine = (line: Line) => {
+  if (line.from.y === line.to.y) {
+    return true;
+  }
+  return false;
 };

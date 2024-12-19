@@ -56,6 +56,13 @@ export default function Home() {
   // To track no of goats placed
   const [goatsPlaced, setGoatsPlaced] = useState(0);
 
+  // Kill goat by index
+  const removeGoatByIndex = (index: number) => {
+    // const newRenderedGoats = renderedGoats.splice(index, 1);
+    const newRenderedGoats = renderedGoats.filter((_, idx) => idx !== index);
+    setRenderedGoats([...newRenderedGoats]);
+  };
+
   const moveCharacter = (
     from: number,
     to: number,
@@ -185,7 +192,6 @@ export default function Home() {
   const getCurrentPosition = (index: number, type: "tiger" | "goat") => {
     if (type === "tiger") {
       const tiger = prerenderedTigers[index];
-      console.log(index, type);
       return tiger.cord;
     } else {
       const goat = renderedGoats[index];
@@ -300,19 +306,24 @@ export default function Home() {
                         toMove.index,
                         toMove.character
                       );
-                      if (
-                        isValidMove({
-                          from: currentPosition as T_BoardPoints,
-                          to: point?.point,
-                          gridLines: gridLines!,
-                          boardPoints: boardPoints!,
-                          step,
-                          character: toMove.character,
-                          renderedGoats,
-                        })
-                      ) {
-                        console.log("ius valid");
+
+                      const { valid, goatKilled } = isValidMove({
+                        from: currentPosition as T_BoardPoints,
+                        to: point?.point,
+                        gridLines: gridLines!,
+                        boardPoints: boardPoints!,
+                        step,
+                        character: toMove.character,
+                        renderedGoats,
+                      });
+
+                      if (valid) {
+                        console.log("is valid");
                         setDestination(point.point);
+                      }
+
+                      if (goatKilled) {
+                        removeGoatByIndex(goatKilled);
                       }
                     }
                   }}
