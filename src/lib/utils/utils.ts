@@ -206,12 +206,14 @@ export const isValidMove = (args: {
       },
       step
     );
+    console.log(choppedPath.length);
 
-    if ((choppedPath.length = 2)) {
+    if (choppedPath.length === 2) {
+      // means there is a point gap between the two cords
       // check if there is a goat in the middle
 
       const tolerance = 40; // Adjust the tolerance
-      const middleLine = choppedPath[0].to;
+      const middleLine = choppedPath[0].to; // Get the middle point
       const middleCord = boardPoints.find((point) => {
         return (
           Math.abs(point.x - middleLine.x) < tolerance &&
@@ -219,12 +221,12 @@ export const isValidMove = (args: {
         );
       });
 
-      // console.log(choppedPath);
       console.log(middleCord);
       const isGoatInMiddle = args.renderedGoats.find((goat) => {
         return goat.cord == middleCord?.point;
       });
       console.log(isGoatInMiddle);
+      if (isGoatInMiddle) return true;
     }
   }
 
@@ -279,7 +281,6 @@ const chopLines = (lines: Line[], segmentSize: number) => {
 
   return choppedLines;
 };
-
 const chopLine = (line: Line, segmentSize: number): Line[] => {
   const { from, to } = line;
 
@@ -290,8 +291,13 @@ const chopLine = (line: Line, segmentSize: number): Line[] => {
   // Calculate the total length of the line
   const length = Math.sqrt(dx * dx + dy * dy);
 
+  // Handle the case where the line length is 0
+  if (length === 0) {
+    return [{ from, to }];
+  }
+
   // Calculate the number of segments
-  const numSegments = Math.ceil(length / segmentSize);
+  const numSegments = Math.max(1, Math.ceil(length / segmentSize));
 
   // Calculate the unit vector (direction normalized to 1)
   const unitX = dx / length;
@@ -314,6 +320,6 @@ const chopLine = (line: Line, segmentSize: number): Line[] => {
 
     segments.push({ from: start, to: end });
   }
-
+  console.log("segments", segments);
   return segments;
 };
