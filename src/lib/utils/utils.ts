@@ -19,27 +19,19 @@ export const generateGridPoints = () => {
     step: step,
   });
 
-  // Add left boundary lines
-  for (let i = topLeft.y; i < bottomRight.y; i += step) {
-    gridLines.push({
-      from: { x: topLeft.x, y: i },
-      to: { x: topLeft.x, y: i + step },
-    });
-  }
+  // // Add left boundary lines
+  // for (let i = topLeft.y; i < bottomRight.y; i += step) {
+  //   gridLines.push({
+  //     from: { x: topLeft.x, y: i },
+  //     to: { x: topLeft.x, y: i + step },
+  //   });
+  // }
 
   // Add right boundary lines
   for (let i = topLeft.y; i < bottomRight.y; i += step) {
     gridLines.push({
       from: { x: bottomRight.x, y: i },
       to: { x: bottomRight.x, y: i + step },
-    });
-  }
-
-  // Add top boundary lines
-  for (let i = topLeft.x; i < bottomRight.x; i += step) {
-    gridLines.push({
-      from: { x: i, y: topLeft.y },
-      to: { x: i + step, y: topLeft.y },
     });
   }
 
@@ -50,6 +42,15 @@ export const generateGridPoints = () => {
       to: { x: i + step, y: bottomRight.y },
     });
   }
+
+  // // Add top boundary lines
+  // for (let i = topLeft.x; i < bottomRight.x; i += step) {
+  //   gridLines.push({
+  //     from: { x: i, y: topLeft.y },
+  //     to: { x: i + step, y: topLeft.y },
+  //   });
+  // }
+
   // Add horizontal lines
   for (let i = 0; i < gridsize; i++) {
     const y = topLeft.y + i * step;
@@ -121,7 +122,8 @@ export const generateGridPoints = () => {
 
   // Chop the lines into smaller segments
   const choppedLines = chopLines(gridLines, step);
-  return { choppedLines, boardCords };
+
+  return { choppedLines, boardCords, step };
 };
 
 // Generate centered board points based on dynamic width and height
@@ -182,8 +184,58 @@ export const isValidMove = (args: {
   to: T_BoardPoints;
   gridLines: T_GridLines;
   boardPoints: { point: T_BoardPoints; x: number; y: number }[];
+  step: number;
+  character: "tiger" | "goat";
+  renderedGoats: { cord?: number; x?: number; y?: number }[];
 }) => {
-  const { from, to, gridLines, boardPoints } = args;
+  const { from, to, gridLines, boardPoints, step } = args;
+
+  // Firstly check if the mover is tiger and check if there is a kill
+  if (args.character === "tiger") {
+    const startCords = boardPoints.find((point) => {
+      return point.point == from;
+    });
+    const endCords = boardPoints.find((point) => {
+      return point.point == to;
+    });
+
+    const choppedPath = chopLine(
+      {
+        from: { x: startCords?.x ?? 0, y: startCords?.y ?? 0 },
+        to: { x: endCords?.x ?? 0, y: endCords?.y ?? 0 },
+      },
+      step
+    );
+
+    if ((choppedPath.length = 2)) {
+      // check if there is a goat in the middle
+
+      const tolerance = 40; // Adjust the tolerance
+      const middleLine = choppedPath[0].to;
+      const middleCord = boardPoints.find((point) => {
+        return (
+          Math.abs(point.x - middleLine.x) < tolerance &&
+          Math.abs(point.y - middleLine.y) < tolerance
+        );
+      });
+
+      // console.log(choppedPath);
+      console.log(middleCord);
+      const isGoatInMiddle = args.renderedGoats.find((goat) => {
+        return goat.cord == middleCord?.point;
+      });
+      console.log(isGoatInMiddle);
+    }
+  }
+
+  // To handle exception cases
+  if (
+    (from == 11 && to == 13) ||
+    (from == 11 && to == 31) ||
+    (from == 31 && to == 51) ||
+    (from == 51 && to == 31)
+  )
+    return false;
 
   // Check in predefined valid moves for diagonal paths
   const isValid = diagonalValidMoves.find((move) => {

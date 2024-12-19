@@ -1,5 +1,4 @@
 "use client";
-
 import { generateGridPoints, isValidMove } from "@/lib/utils/utils";
 import { T_BoardPoints, T_GridLines } from "@/types/types";
 import { useEffect, useState } from "react";
@@ -30,8 +29,6 @@ export default function Home() {
     { cord?: number; x?: number; y?: number }[]
   >([{ cord: 11 }, { cord: 15 }, { cord: 51 }, { cord: 55 }]);
 
-  // const [renderedGoats, setRenderedGoats] = useState<number[]>([]);
-
   const [renderedGoats, setRenderedGoats] = useState<
     { cord?: number; x?: number; y?: number }[]
   >([]);
@@ -40,6 +37,8 @@ export default function Home() {
     character: "goat" | "tiger";
     index: number;
   }>();
+
+  const [step, setStep] = useState<number>(0);
 
   // To set the destination of the character
   const [destination, setDestination] = useState<number>();
@@ -53,6 +52,8 @@ export default function Home() {
   // Init the images
   const [tigerImage, setTigerImage] = useState<HTMLImageElement>();
   const [goatImage, setGoatImage] = useState<HTMLImageElement>();
+
+  // To track no of goats placed
   const [goatsPlaced, setGoatsPlaced] = useState(0);
 
   const moveCharacter = (
@@ -237,6 +238,8 @@ export default function Home() {
     }
   }, [destination, toMove, prerenderedTigers, renderedGoats]);
 
+  const [hoveredPoint, setHoveredPoint] = useState<number>();
+
   return (
     <div>
       <div className="flex justify-center">
@@ -268,6 +271,19 @@ export default function Home() {
                   x={point.x}
                   y={point.y}
                   radius={15}
+                  fill={hoveredPoint === point.point ? "purple" : undefined}
+                  onMouseEnter={(e) => {
+                    const stage = e.target.getStage();
+                    if (!stage) return;
+                    stage.container().style.cursor = "pointer";
+                  }}
+                  onMouseLeave={(e) => {
+                    const stage = e.target.getStage();
+                    if (!stage) return;
+                    stage.container().style.cursor = "default";
+                  }}
+                  onMouseOver={() => setHoveredPoint(point.point)}
+                  onMouseOut={() => setHoveredPoint(undefined)}
                   // fill="purple"
                   onClick={() => {
                     if (turn === "goat" && goatsPlaced < 20) {
@@ -284,13 +300,15 @@ export default function Home() {
                         toMove.index,
                         toMove.character
                       );
-
                       if (
                         isValidMove({
                           from: currentPosition as T_BoardPoints,
                           to: point?.point,
                           gridLines: gridLines!,
                           boardPoints: boardPoints!,
+                          step,
+                          character: toMove.character,
+                          renderedGoats,
                         })
                       ) {
                         console.log("ius valid");
@@ -316,6 +334,16 @@ export default function Home() {
                     // If the turn is tiger, then the tiger can move
                     if (turn === "tiger")
                       setToMove({ character: "tiger", index: idx });
+                  }}
+                  onMouseEnter={(e) => {
+                    const stage = e.target.getStage();
+                    if (!stage || turn !== "tiger") return;
+                    stage.container().style.cursor = "pointer";
+                  }}
+                  onMouseLeave={(e) => {
+                    const stage = e.target.getStage();
+                    if (!stage) return;
+                    stage.container().style.cursor = "default";
                   }}
                   cornerRadius={1000}
                   scale={
@@ -367,6 +395,16 @@ export default function Home() {
                   width={80}
                   image={goatImage}
                   alt="characters"
+                  onMouseEnter={(e) => {
+                    const stage = e.target.getStage();
+                    if (!stage || turn !== "goat" || goatsPlaced >= 20) return;
+                    stage.container().style.cursor = "pointer";
+                  }}
+                  onMouseLeave={(e) => {
+                    const stage = e.target.getStage();
+                    if (!stage) return;
+                    stage.container().style.cursor = "default";
+                  }}
                   shadowColor={
                     toMove?.character === "goat" && toMove.index === idx
                       ? "green"
@@ -407,8 +445,10 @@ export default function Home() {
       </Stage>
       <button
         onClick={() => {
-          setGridLines(generateGridPoints()?.choppedLines);
-          setBoardPoints(generateGridPoints()?.boardCords);
+          const data = generateGridPoints();
+          setGridLines(data?.choppedLines);
+          setBoardPoints(data?.boardCords);
+          setStep(data?.step ?? 0);
         }}
       >
         Generate
