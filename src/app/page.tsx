@@ -323,7 +323,8 @@ export default function Home() {
                       }
 
                       if (goatKilled) {
-                        removeGoatByIndex(goatKilled);
+                        console.log("Goat killed", Number(goatKilled));
+                        removeGoatByIndex(Number(goatKilled));
                       }
                     }
                   }}
