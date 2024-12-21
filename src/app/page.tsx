@@ -17,6 +17,12 @@ export default function Home() {
 
   useEffect(() => {
     function handleResize() {
+      console.log("RESIZXEDD");
+
+      const data = generateGridPoints();
+      setGridLines(data?.choppedLines);
+      setBoardPoints(data?.boardCords);
+      setStep(data?.step ?? 0);
       setWindowSize({
         width: window.innerWidth,
         height: window.innerHeight,
@@ -280,7 +286,7 @@ export default function Home() {
     console.log("Trapped count", trappedCount);
 
     if (trappedCount >= 4) setGameOver({ winner: "goat" });
-  }, [renderedGoats, boardPoints, gridLines]);
+  }, [renderedGoats]);
 
   // to track game over
   useEffect(() => {

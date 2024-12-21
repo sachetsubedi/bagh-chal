@@ -18,40 +18,8 @@ export const generateGridPoints = () => {
     step: step,
   });
 
-  // // Add left boundary lines
-  // for (let i = topLeft.y; i < bottomRight.y; i += step) {
-  //   gridLines.push({
-  //     from: { x: topLeft.x, y: i },
-  //     to: { x: topLeft.x, y: i + step },
-  //   });
-  // }
-
-  // Add right boundary lines
-  for (let i = topLeft.y; i < bottomRight.y; i += step) {
-    gridLines.push({
-      from: { x: bottomRight.x, y: i },
-      to: { x: bottomRight.x, y: i + step },
-    });
-  }
-
-  // Add bottom boundary lines
-  for (let i = topLeft.x; i < bottomRight.x; i += step) {
-    gridLines.push({
-      from: { x: i, y: bottomRight.y },
-      to: { x: i + step, y: bottomRight.y },
-    });
-  }
-
-  // // Add top boundary lines
-  // for (let i = topLeft.x; i < bottomRight.x; i += step) {
-  //   gridLines.push({
-  //     from: { x: i, y: topLeft.y },
-  //     to: { x: i + step, y: topLeft.y },
-  //   });
-  // }
-
   // Add horizontal lines
-  for (let i = 0; i < gridsize; i++) {
+  for (let i = 0; i <= gridsize; i++) {
     const y = topLeft.y + i * step;
     gridLines.push({
       from: { x: topLeft.x, y },
@@ -60,7 +28,7 @@ export const generateGridPoints = () => {
   }
 
   // Add vertical lines
-  for (let i = 0; i < gridsize; i++) {
+  for (let i = 0; i <= gridsize; i++) {
     const x = topLeft.x + i * step;
     gridLines.push({
       from: { x, y: topLeft.y },
@@ -238,7 +206,6 @@ export const isValidMove = (args: {
             exists = true;
           }
         });
-
         if (!exists) isChoppedPathsValid = false;
       });
 
@@ -625,8 +592,6 @@ const tigerHasAValidKillMove = (
   });
 
   // i want to cry 😭
-
-  // console.log(filteredFirstPointsToSearch, filteredSecondPointsToSearch);
 
   let hasAValidKill: boolean = false;
 
