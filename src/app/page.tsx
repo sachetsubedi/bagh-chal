@@ -356,6 +356,7 @@ export default function Home() {
                       renderedGoats,
                       boardPoints: boardPoints!,
                       gridLines: gridLines!,
+                      renderedTigers: prerenderedTigers,
                     });
                   }}
                   onMouseEnter={(e) => {

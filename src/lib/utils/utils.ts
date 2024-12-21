@@ -398,6 +398,7 @@ export const isTigerTrapped = (args: {
   renderedGoats: { cord?: number; x?: number; y?: number }[];
   boardPoints: { point: T_BoardPoints; x: number; y: number }[];
   gridLines: T_GridLines;
+  renderedTigers: { cord?: number; x?: number; y?: number }[];
 }) => {
   const { tigerCord } = args;
 
@@ -491,7 +492,12 @@ export const isTigerTrapped = (args: {
     });
 
     if (!isGoat) {
-      hasFreeMove = true;
+      // If there is no goat, check if there is a tiger in that place
+      const isTiger = args.renderedTigers.find((tiger) => {
+        return tiger.cord === point;
+      });
+
+      if (!isTiger) hasFreeMove = true;
     }
   });
 
