@@ -276,6 +276,7 @@ export default function Home() {
         trappedCount++;
       }
     }
+
     console.log("Trapped count", trappedCount);
 
     if (trappedCount >= 4) setGameOver({ winner: "goat" });

@@ -217,6 +217,33 @@ export const isValidMove = (args: {
       // means there is a point gap between the two cords
       // check if there is a goat in the middle
 
+      // verify that the chopped path exits in the rendered lines
+      let isChoppedPathsValid = true;
+
+      const epsilon = 50; // Define a tolerance value
+
+      choppedPath.forEach((path) => {
+        let exists = false;
+        gridLines.forEach((line) => {
+          if (
+            (Math.abs(line.from.x - path.from.x) <= epsilon &&
+              Math.abs(line.from.y - path.from.y) <= epsilon &&
+              Math.abs(line.to.x - path.to.x) <= epsilon &&
+              Math.abs(line.to.y - path.to.y) <= epsilon) ||
+            (Math.abs(line.from.x - path.to.x) <= epsilon &&
+              Math.abs(line.from.y - path.to.y) <= epsilon &&
+              Math.abs(line.to.x - path.from.x) <= epsilon &&
+              Math.abs(line.to.y - path.from.y) <= epsilon)
+          ) {
+            exists = true;
+          }
+        });
+
+        if (!exists) isChoppedPathsValid = false;
+      });
+
+      if (!isChoppedPathsValid) return { valid: false };
+
       const tolerance = 40; // Adjust the tolerance
       const middleLine = choppedPath[0].to; // Get the middle point
       const middleCord = boardPoints.find((point) => {
