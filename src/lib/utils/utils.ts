@@ -102,10 +102,10 @@ const generateCenteredBoardPoints = () => {
   let boardSize;
   if (screenHeight < screenWidth) {
     // If height is less than width, set the board size to 80% of the height
-    boardSize = screenHeight * 0.8;
+    boardSize = screenHeight * 0.75;
   } else {
     // If width is less than height, set the board size to 80% of the width
-    boardSize = screenWidth * 0.8;
+    boardSize = screenWidth * 0.75;
   }
 
   // Calculate the top-left corner (x, y) to center the board
