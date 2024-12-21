@@ -477,7 +477,10 @@ export const isTigerTrapped = (args: {
     args.renderedTigers
   );
 
-  if (tigerHasAValidKill) return false;
+  if (tigerHasAValidKill) {
+    console.log("Tiger has a valid kill move", tigerCord);
+    return false;
+  }
 
   // search for all points to search and filter ouyt the invalid moves
   // this is actual points to search if it is ocupied or not 😮‍💨
@@ -489,6 +492,8 @@ export const isTigerTrapped = (args: {
       );
     });
   });
+
+  console.log("Valid points to search", validPointsToSearch);
 
   let hasFreeMove: boolean = false;
 
@@ -507,6 +512,8 @@ export const isTigerTrapped = (args: {
       if (!isTiger) hasFreeMove = true;
     }
   });
+
+  console.log("Has free move", hasFreeMove);
 
   return !hasFreeMove;
 };

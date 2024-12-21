@@ -1,4 +1,5 @@
 "use client";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import {
   generateGridPoints,
   isTigerTrapped,
@@ -268,6 +269,7 @@ export default function Home() {
     if (!prerenderedTigers || !renderedGoats || !boardPoints || !gridLines)
       return;
     for (let i = 0; i < 4; i++) {
+      // console.log(prerenderedTigers[i].cord);
       const isTrapped = isTigerTrapped({
         tigerCord: prerenderedTigers[i].cord!,
         renderedGoats,
@@ -276,12 +278,12 @@ export default function Home() {
         renderedTigers: prerenderedTigers,
       });
 
+      // console.log(i, isTrapped);
+
       if (isTrapped) {
         trappedCount++;
       }
     }
-
-    console.log("Trapped count", trappedCount);
 
     if (trappedCount >= 4) setGameOver({ winner: "goat" });
   }, [renderedGoats]);
@@ -569,6 +571,11 @@ export default function Home() {
             })}
         </Layer>
       </Stage>
+
+      <Dialog open={gameOver.winner !== null}>
+        <DialogTitle>GAME OVER</DialogTitle>
+        <DialogContent>GAME OVER</DialogContent>
+      </Dialog>
     </div>
   );
 }
