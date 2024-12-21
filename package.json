@@ -6,8 +6,7 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "postinstall": "npm install canvas --build-from-source"
+    "lint": "next lint"
   },
   "dependencies": {
     "@iconify/react": "^5.1.0",
@@ -35,5 +34,8 @@
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
+  },
+  "engines": {
+    "node": "20.x"
   }
 }
