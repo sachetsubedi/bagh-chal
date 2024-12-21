@@ -297,8 +297,25 @@ export default function Home() {
 
   return (
     <div className="h-screen landing-play ">
-      <div className="flex justify-center">
-        <h1>Turn: {turn}</h1>
+      <div className="px-2 flex justify-between items-center">
+        <h1 className="hidden md:block text-2xl text-white font-bold">
+          BAGH CHAL
+        </h1>
+        <div className="flex justify-center">
+          <div className="text-2xl font-bold text-white bg-violet-600 p-2 rounded-lg">
+            {turn === "goat"
+              ? `${goatsPlaced >= 20 ? "Goat's Move" : "Goat to place"} `
+              : "Tiger's Move"}
+          </div>
+        </div>
+        <div className="flex items-end mr-5 gap-2">
+          <div className="p-2 bg-violet-500 text-white rounded-xl">
+            Goats killed: {goatKillsCount}{" "}
+          </div>
+          <div className="p-2 bg-violet-500 text-white rounded-xl">
+            Goats placed: {goatsPlaced}{" "}
+          </div>
+        </div>
       </div>
 
       <Stage width={windowSize.width - 20} height={windowSize.height - 25}>
