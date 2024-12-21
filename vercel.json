@@ -1,0 +1,9 @@
+{
+  "build": {
+    "env": {
+      "PKG_CONFIG_PATH": "/usr/lib/pkgconfig:/usr/lib64/pkgconfig",
+      "CXX": "g++",
+      "CC": "gcc"
+    }
+  }
+}
