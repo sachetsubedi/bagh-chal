@@ -1,5 +1,9 @@
 "use client";
-import { generateGridPoints, isValidMove } from "@/lib/utils/utils";
+import {
+  generateGridPoints,
+  isTigerTrapped,
+  isValidMove,
+} from "@/lib/utils/utils";
 import { T_BoardPoints, T_GridLines } from "@/types/types";
 import { useEffect, useState } from "react";
 import { Circle, Image, Layer, Line, Stage } from "react-konva";
@@ -346,6 +350,13 @@ export default function Home() {
                     // If the turn is tiger, then the tiger can move
                     if (turn === "tiger")
                       setToMove({ character: "tiger", index: idx });
+
+                    isTigerTrapped({
+                      tigerCord: tiger.cord ?? 0,
+                      renderedGoats,
+                      boardPoints: boardPoints!,
+                      gridLines: gridLines!,
+                    });
                   }}
                   onMouseEnter={(e) => {
                     const stage = e.target.getStage();

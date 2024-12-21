@@ -392,3 +392,110 @@ const isMoveInALine = (line: Line) => {
 
   return false;
 };
+
+export const isTigerTrapped = (args: {
+  tigerCord: number;
+  renderedGoats: { cord?: number; x?: number; y?: number }[];
+  boardPoints: { point: T_BoardPoints; x: number; y: number }[];
+  gridLines: T_GridLines;
+}) => {
+  const { tigerCord } = args;
+
+  const directions = [
+    { x: -1, y: 0 }, // Up
+    { x: 1, y: 0 }, // Down
+    { x: 0, y: -1 }, // Left
+    { x: 0, y: 1 }, // Right
+    { x: -1, y: -1 }, // Top-left (Diagonal)
+    { x: -1, y: 1 }, // Top-right (Diagonal)
+    { x: 1, y: -1 }, // Bottom-left (Diagonal)
+    { x: 1, y: 1 }, // Bottom-right (Diagonal)
+  ];
+
+  const splittedCords = tigerCord.toString().split("");
+
+  const tigerCoords = {
+    x: parseInt(splittedCords[0]),
+    y: parseInt(splittedCords[1]),
+  };
+
+  // const blackSpaces = [];
+
+  const pointsToSearch = directions.map((dir) => {
+    const cordToSearch = {
+      x: tigerCoords.x + dir.x,
+      y: tigerCoords.y + dir.y,
+    };
+
+    if (
+      cordToSearch.x < 1 ||
+      cordToSearch.y < 1 ||
+      cordToSearch.x > 5 ||
+      cordToSearch.y > 5
+    ) {
+      return null;
+    }
+
+    return cordToSearch;
+  });
+
+  // Filter oput teh null values
+  const filteredPointsToSearch = pointsToSearch.filter((point) => {
+    return point !== null;
+  });
+
+  // Join the points to search (x and y) to a single number as the globally used cords
+  const joinedPointsToSearched = filteredPointsToSearch.map((points) => {
+    return Number(points.x.toString() + points.y.toString());
+  });
+
+  // Define a tolerance value
+  const epsilon = 2;
+
+  // Convert grid lines to and from cords with tolerance
+  const gridLinesCords = args.gridLines.map((line) => {
+    const fromCord = args.boardPoints.find((point) => {
+      return (
+        Math.abs(point.x - line.from.x) <= epsilon &&
+        Math.abs(point.y - line.from.y) <= epsilon
+      );
+    });
+
+    const toCord = args.boardPoints.find((point) => {
+      return (
+        Math.abs(point.x - line.to.x) <= epsilon &&
+        Math.abs(point.y - line.to.y) <= epsilon
+      );
+    });
+
+    return { from: fromCord?.point, to: toCord?.point };
+  });
+
+  // search for all points to search and filter ouyt the invalid moves
+  // this is actual points to search if it is ocupied or not 😮‍💨
+  const validPointsToSearch = joinedPointsToSearched.filter((point) => {
+    return gridLinesCords.find((line) => {
+      return (
+        (line.from === tigerCord && line.to === point) ||
+        (line.from === point && line.to === tigerCord)
+      );
+    });
+  });
+
+  let hasFreeMove: boolean = false;
+
+  // Now search all the points to search if they are occupied by goats or tigers
+  validPointsToSearch.forEach((point) => {
+    const isGoat = args.renderedGoats.find((goat) => {
+      return goat.cord === point;
+    });
+
+    if (!isGoat) {
+      hasFreeMove = true;
+    }
+  });
+
+  console.log(hasFreeMove);
+
+  console.log(validPointsToSearch);
+};
