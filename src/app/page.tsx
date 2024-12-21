@@ -42,6 +42,10 @@ export default function Home() {
     index: number;
   }>();
 
+  const [gameOver, setGameOver] = useState<{ winner: "tiger" | "goat" | null }>(
+    { winner: null }
+  );
+
   const [step, setStep] = useState<number>(0);
 
   // To set the destination of the character
@@ -248,6 +252,28 @@ export default function Home() {
     }
   }, [destination, toMove, prerenderedTigers, renderedGoats]);
 
+  useEffect(() => {
+    let trappedCount = 0;
+    if (!prerenderedTigers || !renderedGoats || !boardPoints || !gridLines)
+      return;
+    for (let i = 0; i < 4; i++) {
+      const isTrapped = isTigerTrapped({
+        tigerCord: prerenderedTigers[i].cord!,
+        renderedGoats,
+        boardPoints: boardPoints!,
+        gridLines: gridLines!,
+        renderedTigers: prerenderedTigers,
+      });
+
+      if (isTrapped) {
+        trappedCount++;
+      }
+    }
+    console.log("Trapped count", trappedCount);
+
+    if (trappedCount >= 4) setGameOver({ winner: "goat" });
+  }, [renderedGoats, boardPoints, gridLines]);
+
   const [hoveredPoint, setHoveredPoint] = useState<number>();
 
   return (
@@ -350,16 +376,6 @@ export default function Home() {
                     // If the turn is tiger, then the tiger can move
                     if (turn === "tiger")
                       setToMove({ character: "tiger", index: idx });
-
-                    console.log(
-                      isTigerTrapped({
-                        tigerCord: tiger.cord ?? 0,
-                        renderedGoats,
-                        boardPoints: boardPoints!,
-                        gridLines: gridLines!,
-                        renderedTigers: prerenderedTigers,
-                      })
-                    );
                   }}
                   onMouseEnter={(e) => {
                     const stage = e.target.getStage();
