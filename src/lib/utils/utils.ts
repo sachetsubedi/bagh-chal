@@ -469,8 +469,19 @@ export const isTigerTrapped = (args: {
       );
     });
 
-    return { from: fromCord?.point, to: toCord?.point };
+    return { from: fromCord?.point as number, to: toCord?.point as number };
   });
+
+  console.log(gridLinesCords);
+  const tigerHasAValidKill = tigerHasAValidKillMove(
+    tigerCord,
+    args.renderedGoats,
+    gridLinesCords,
+    args.renderedTigers
+  );
+
+  console.log("tiger has a valid kill move", tigerHasAValidKill);
+  // console.log("tiger has a valid kill move", tigerHasAValidKill);
 
   // search for all points to search and filter ouyt the invalid moves
   // this is actual points to search if it is ocupied or not 😮‍💨
@@ -504,4 +515,118 @@ export const isTigerTrapped = (args: {
   console.log(hasFreeMove);
 
   console.log(validPointsToSearch);
+};
+
+const tigerHasAValidKillMove = (
+  tigerCord: number,
+  renderedGoats: { cord?: number; x?: number; y?: number }[],
+  gridLineCords: { from: number; to: number }[],
+  renderedTigers: { cord?: number; x?: number; y?: number }[]
+) => {
+  const directions = [
+    { x: -1, y: 0 }, // Up
+    { x: 1, y: 0 }, // Down
+    { x: 0, y: -1 }, // Left
+    { x: 0, y: 1 }, // Right
+    { x: -1, y: -1 }, // Top-left (Diagonal)
+    { x: -1, y: 1 }, // Top-right (Diagonal)
+    { x: 1, y: -1 }, // Bottom-left (Diagonal)
+    { x: 1, y: 1 }, // Bottom-right (Diagonal)
+  ];
+
+  const secondStepDirections = [
+    { x: -2, y: 0 }, // Up
+    { x: 2, y: 0 }, // Down
+    { x: 0, y: -2 }, // Left
+    { x: 0, y: 2 }, // Right
+    { x: -2, y: -2 }, // Top-left (Diagonal)
+    { x: -2, y: 2 }, // Top-right (Diagonal)
+    { x: 2, y: -2 }, // Bottom-left (Diagonal)
+    { x: 2, y: 2 }, // Bottom-right (Diagonal)
+  ];
+
+  const splittedCords = tigerCord.toString().split("");
+
+  const tigerCoords = {
+    x: parseInt(splittedCords[0]),
+    y: parseInt(splittedCords[1]),
+  };
+
+  // const blackSpaces = [];
+
+  const firstPointsToSearch = directions.map((dir) => {
+    const cordToSearch = {
+      x: tigerCoords.x + dir.x,
+      y: tigerCoords.y + dir.y,
+    };
+
+    return cordToSearch;
+  });
+
+  const secondPointsToSearch = secondStepDirections.map((dir) => {
+    const cordToSearch = {
+      x: tigerCoords.x + dir.x,
+      y: tigerCoords.y + dir.y,
+    };
+
+    return cordToSearch;
+  });
+
+  const invalidIndexes: number[] = [];
+
+  //  get the indxes of the second points to search which are invalid, to remove them from the first points to search
+  secondPointsToSearch.forEach((point, idx) => {
+    if (point.x < 1 || point.y < 1 || point.x > 5 || point.y > 5) {
+      invalidIndexes.push(idx);
+    }
+  });
+
+  // Filter out the invalid indexes from both the first and second points to search
+  const filteredFirstPointsToSearch = firstPointsToSearch.filter((_, idx) => {
+    return !invalidIndexes.includes(idx);
+  });
+
+  const filteredSecondPointsToSearch = secondPointsToSearch.filter((_, idx) => {
+    return !invalidIndexes.includes(idx);
+  });
+
+  // i want to cry 😭
+
+  // console.log(filteredFirstPointsToSearch, filteredSecondPointsToSearch);
+
+  let hasAValidKill: boolean = false;
+
+  // Now check if the first cord has a goat and the second cord is empty
+  filteredFirstPointsToSearch.forEach((point, idx) => {
+    const isGoat = renderedGoats.find((goat) => {
+      return goat.cord === Number(point.x.toString() + point.y.toString());
+    });
+
+    // If there is goast, check the second cord if it is empty
+    if (isGoat) {
+      const noGoat = renderedGoats.find((goat) => {
+        return (
+          goat.cord ===
+          Number(
+            filteredSecondPointsToSearch[idx].x.toString() +
+              filteredSecondPointsToSearch[idx].y.toString()
+          )
+        );
+      });
+
+      const noTiger = renderedTigers.find((tiger) => {
+        return (
+          tiger.cord ===
+          Number(
+            filteredSecondPointsToSearch[idx].x.toString() +
+              filteredSecondPointsToSearch[idx].y.toString()
+          )
+        );
+      });
+
+      if (!noGoat && !noTiger) hasAValidKill = true;
+    }
+  });
+
+  return hasAValidKill;
 };
