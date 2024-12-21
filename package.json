@@ -6,12 +6,13 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "postinstall": "npm install canvas --build-from-source"
   },
   "dependencies": {
     "@iconify/react": "^5.1.0",
     "@radix-ui/react-slot": "^1.1.1",
-    "canvas": "^2.11.2",
+    "canvas": "^2.11.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "konva": "^9.3.16",
