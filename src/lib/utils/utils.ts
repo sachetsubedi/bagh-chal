@@ -420,8 +420,6 @@ export const isTigerTrapped = (args: {
     y: parseInt(splittedCords[1]),
   };
 
-  // const blackSpaces = [];
-
   const pointsToSearch = directions.map((dir) => {
     const cordToSearch = {
       x: tigerCoords.x + dir.x,
@@ -472,7 +470,6 @@ export const isTigerTrapped = (args: {
     return { from: fromCord?.point as number, to: toCord?.point as number };
   });
 
-  console.log(gridLinesCords);
   const tigerHasAValidKill = tigerHasAValidKillMove(
     tigerCord,
     args.renderedGoats,
@@ -480,8 +477,7 @@ export const isTigerTrapped = (args: {
     args.renderedTigers
   );
 
-  console.log("tiger has a valid kill move", tigerHasAValidKill);
-  // console.log("tiger has a valid kill move", tigerHasAValidKill);
+  if (tigerHasAValidKill) return false;
 
   // search for all points to search and filter ouyt the invalid moves
   // this is actual points to search if it is ocupied or not 😮‍💨
@@ -512,9 +508,7 @@ export const isTigerTrapped = (args: {
     }
   });
 
-  console.log(hasFreeMove);
-
-  console.log(validPointsToSearch);
+  return !hasFreeMove;
 };
 
 const tigerHasAValidKillMove = (

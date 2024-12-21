@@ -351,13 +351,15 @@ export default function Home() {
                     if (turn === "tiger")
                       setToMove({ character: "tiger", index: idx });
 
-                    isTigerTrapped({
-                      tigerCord: tiger.cord ?? 0,
-                      renderedGoats,
-                      boardPoints: boardPoints!,
-                      gridLines: gridLines!,
-                      renderedTigers: prerenderedTigers,
-                    });
+                    console.log(
+                      isTigerTrapped({
+                        tigerCord: tiger.cord ?? 0,
+                        renderedGoats,
+                        boardPoints: boardPoints!,
+                        gridLines: gridLines!,
+                        renderedTigers: prerenderedTigers,
+                      })
+                    );
                   }}
                   onMouseEnter={(e) => {
                     const stage = e.target.getStage();
