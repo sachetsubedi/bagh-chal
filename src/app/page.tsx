@@ -64,6 +64,13 @@ export default function Home() {
   // To track no of goats placed
   const [goatsPlaced, setGoatsPlaced] = useState(0);
 
+  const [goatKillsCount, setGoatKillsCount] = useState<number>(0);
+
+  useEffect(() => {
+    console.log("Goat kills count", goatKillsCount);
+    if (goatKillsCount >= 5) setGameOver({ winner: "tiger" });
+  }, [goatKillsCount]);
+
   // Kill goat by index
   const removeGoatByIndex = (index: number) => {
     // const newRenderedGoats = renderedGoats.splice(index, 1);
@@ -274,6 +281,13 @@ export default function Home() {
     if (trappedCount >= 4) setGameOver({ winner: "goat" });
   }, [renderedGoats, boardPoints, gridLines]);
 
+  // to track game over
+  useEffect(() => {
+    if (gameOver.winner) {
+      console.log("Game over", gameOver.winner);
+    }
+  }, [gameOver]);
+
   const [hoveredPoint, setHoveredPoint] = useState<number>();
 
   return (
@@ -353,7 +367,7 @@ export default function Home() {
                       }
 
                       if (goatKilled) {
-                        console.log("Goat killed", Number(goatKilled));
+                        setGoatKillsCount((prev) => prev + 1);
                         removeGoatByIndex(Number(goatKilled));
                       }
                     }

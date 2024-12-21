@@ -412,8 +412,14 @@ export const isTigerTrapped = (args: {
     { x: 1, y: -1 }, // Bottom-left (Diagonal)
     { x: 1, y: 1 }, // Bottom-right (Diagonal)
   ];
+  let splittedCords: string[] = [];
 
-  const splittedCords = tigerCord.toString().split("");
+  try {
+    splittedCords = tigerCord.toString().split("");
+  } catch (e) {
+    console.log("In transition", e);
+  }
+  if (!splittedCords) return;
 
   const tigerCoords = {
     x: parseInt(splittedCords[0]),
@@ -539,7 +545,14 @@ const tigerHasAValidKillMove = (
     { x: 2, y: 2 }, // Bottom-right (Diagonal)
   ];
 
-  const splittedCords = tigerCord.toString().split("");
+  let splittedCords: string[] = [];
+
+  try {
+    splittedCords = tigerCord.toString().split("");
+  } catch (e) {
+    console.log("In transition", e);
+  }
+  if (!splittedCords) return;
 
   const tigerCoords = {
     x: parseInt(splittedCords[0]),
