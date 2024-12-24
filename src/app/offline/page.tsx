@@ -264,7 +264,7 @@ export default function Home() {
     }
   }, [destination, toMove, prerenderedTigers, renderedGoats]);
 
-  useEffect(() => {
+  const checkTigersTrapped = () => {
     let trappedCount = 0;
     if (!prerenderedTigers || !renderedGoats || !boardPoints || !gridLines)
       return;
@@ -278,7 +278,7 @@ export default function Home() {
         renderedTigers: prerenderedTigers,
       });
 
-      // console.log(i, isTrapped);
+      console.log(i, isTrapped);
 
       if (isTrapped) {
         trappedCount++;
@@ -286,7 +286,7 @@ export default function Home() {
     }
 
     if (trappedCount >= 4) setGameOver({ winner: "goat" });
-  }, [renderedGoats]);
+  };
 
   // to track game over
   useEffect(() => {
@@ -294,6 +294,31 @@ export default function Home() {
       console.log("Game over", gameOver.winner);
     }
   }, [gameOver]);
+
+  const [isChanging, setIsChanging] = useState(false);
+
+  useEffect(() => {
+    let debounceTimer;
+
+    if (!isChanging) {
+      // Fire start event
+      console.log("Start of changes");
+      setIsChanging(true);
+    }
+
+    // Clear previous timer and set a new one
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => {
+      // Fire end event
+      checkTigersTrapped();
+      console.log("End of changes");
+
+      setIsChanging(false);
+    }, 100); // Adjust debounce time as needed (e.g., 100ms)
+
+    // Cleanup timer on unmount or on variable change
+    return () => clearTimeout(debounceTimer);
+  }, [renderedGoats, prerenderedTigers]);
 
   const [hoveredPoint, setHoveredPoint] = useState<number>();
 
@@ -385,7 +410,6 @@ export default function Home() {
                       });
 
                       if (valid) {
-                        console.log("is valid");
                         setDestination(point.point);
                       }
 
@@ -423,7 +447,6 @@ export default function Home() {
                       });
 
                       if (valid) {
-                        console.log("is valid");
                         setDestination(point.point);
                       }
 
