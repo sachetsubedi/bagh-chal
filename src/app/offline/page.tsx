@@ -15,6 +15,8 @@ export default function Home() {
   // To get the window size
   const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
 
+  const [isPhone, setIsPhone] = useState(false);
+
   const router = useRouter();
 
   // To keep track of the turn
@@ -30,6 +32,11 @@ export default function Home() {
         width: window.innerWidth,
         height: window.innerHeight,
       });
+      if (window.innerWidth < 768) {
+        setIsPhone(true);
+      } else {
+        setIsPhone(false);
+      }
     }
 
     window.addEventListener("resize", handleResize);
@@ -102,10 +109,10 @@ export default function Home() {
     const dx = toCords.x - fromCords.x;
     const dy = toCords.y - fromCords.y;
 
-    const stepX = dx * 0.01;
-    const stepY = dy * 0.01;
+    const stepX = dx * (isPhone ? 0.1 : 0.05);
+    const stepY = dy * (isPhone ? 0.1 : 0.05);
 
-    const epsilon = 0.5; // Small tolerance value
+    const epsilon = 5; // Small tolerance value
 
     if (type === "tiger") {
       const currentTiger = prerenderedTigers[index];
