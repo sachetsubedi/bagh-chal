@@ -378,6 +378,8 @@ export default function Home() {
                   // fill="purple"
 
                   onClick={() => {
+                    if (isChanging) return;
+
                     if (turn === "goat" && goatsPlaced < 20) {
                       // If the turn and all goats are not placed, then place the goat
                       setRenderedGoats([
@@ -414,6 +416,8 @@ export default function Home() {
                     }
                   }}
                   onTap={() => {
+                    if (isChanging) return;
+
                     if (turn === "goat" && goatsPlaced < 20) {
                       // If the turn and all goats are not placed, then place the goat
                       setRenderedGoats([
@@ -465,11 +469,13 @@ export default function Home() {
                   alt="characters"
                   preventDefault={true}
                   onTap={() => {
+                    if (isChanging) return;
                     // If the turn is tiger, then the tiger can move
                     if (turn === "tiger")
                       setToMove({ character: "tiger", index: idx });
                   }}
                   onClick={() => {
+                    if (isChanging) return;
                     // If the turn is tiger, then the tiger can move
                     if (turn === "tiger")
                       setToMove({ character: "tiger", index: idx });
@@ -573,11 +579,14 @@ export default function Home() {
                       : 0
                   }
                   onClick={() => {
+                    if (isChanging) return;
+
                     if (turn === "goat" && goatsPlaced >= 20) {
                       setToMove({ character: "goat", index: idx });
                     }
                   }}
                   onTap={() => {
+                    if (isChanging) return;
                     if (turn === "goat" && goatsPlaced >= 20) {
                       setToMove({ character: "goat", index: idx });
                     }
