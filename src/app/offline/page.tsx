@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import {
   generateGridPoints,
@@ -6,12 +7,15 @@ import {
   isValidMove,
 } from "@/lib/utils/utils";
 import { T_BoardPoints, T_GridLines } from "@/types/types";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Circle, Image, Layer, Line, Stage } from "react-konva";
 
 export default function Home() {
   // To get the window size
   const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
+
+  const router = useRouter();
 
   // To keep track of the turn
   const [turn, setTurn] = useState<"goat" | "tiger">("goat");
@@ -72,7 +76,6 @@ export default function Home() {
   const [goatKillsCount, setGoatKillsCount] = useState<number>(0);
 
   useEffect(() => {
-    console.log("Goat kills count", goatKillsCount);
     if (goatKillsCount >= 5) setGameOver({ winner: "tiger" });
   }, [goatKillsCount]);
 
@@ -269,7 +272,6 @@ export default function Home() {
     if (!prerenderedTigers || !renderedGoats || !boardPoints || !gridLines)
       return;
     for (let i = 0; i < 4; i++) {
-      // console.log(prerenderedTigers[i].cord);
       const isTrapped = isTigerTrapped({
         tigerCord: prerenderedTigers[i].cord!,
         renderedGoats,
@@ -277,8 +279,6 @@ export default function Home() {
         gridLines: gridLines!,
         renderedTigers: prerenderedTigers,
       });
-
-      console.log(i, isTrapped);
 
       if (isTrapped) {
         trappedCount++;
@@ -288,35 +288,22 @@ export default function Home() {
     if (trappedCount >= 4) setGameOver({ winner: "goat" });
   };
 
-  // to track game over
-  useEffect(() => {
-    if (gameOver.winner) {
-      console.log("Game over", gameOver.winner);
-    }
-  }, [gameOver]);
-
   const [isChanging, setIsChanging] = useState(false);
 
   useEffect(() => {
-    let debounceTimer;
-
     if (!isChanging) {
       // Fire start event
-      console.log("Start of changes");
       setIsChanging(true);
     }
 
-    // Clear previous timer and set a new one
-    clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(() => {
+    // Set a debounce timer
+    const debounceTimer = setTimeout(() => {
       // Fire end event
       checkTigersTrapped();
-      console.log("End of changes");
-
       setIsChanging(false);
     }, 100); // Adjust debounce time as needed (e.g., 100ms)
 
-    // Cleanup timer on unmount or on variable change
+    // Cleanup timer on unmount or variable change
     return () => clearTimeout(debounceTimer);
   }, [renderedGoats, prerenderedTigers]);
 
@@ -420,7 +407,6 @@ export default function Home() {
                     }
                   }}
                   onTap={() => {
-                    console.log("Tapped");
                     if (turn === "goat" && goatsPlaced < 20) {
                       // If the turn and all goats are not placed, then place the goat
                       setRenderedGoats([
@@ -595,9 +581,49 @@ export default function Home() {
         </Layer>
       </Stage>
 
-      <Dialog open={gameOver.winner !== null}>
-        <DialogTitle>GAME OVER</DialogTitle>
-        <DialogContent>GAME OVER</DialogContent>
+      <Dialog
+        open={gameOver.winner !== null}
+        // open
+        onOpenChange={() => {
+          router.push("/");
+        }}
+      >
+        <DialogTitle>
+          {gameOver.winner === "tiger"
+            ? "Tigers Win"
+            : gameOver.winner === "goat"
+            ? "Goats Win"
+            : "Game Over"}
+        </DialogTitle>
+        <DialogContent className="bg-violet-400 border-none shadow-md text-white">
+          <div className="text-5xl font-bold text-center text-white">
+            {gameOver.winner === "tiger"
+              ? "Tigers Win"
+              : gameOver.winner === "goat"
+              ? "Goats Win"
+              : "Game Over"}
+          </div>
+
+          <div className="flex justify-center items-center text-slate-200">
+            {gameOver.winner === "tiger" && (
+              <div>More than 5 goats are killed </div>
+            )}
+            {gameOver.winner === "goat" && (
+              <div>All tigers are trapped and have no moves </div>
+            )}
+          </div>
+
+          <div className="flex justify-center items-center">
+            <Button
+              variant={"secondary"}
+              onClick={() => {
+                router.push("/");
+              }}
+            >
+              Play Again
+            </Button>
+          </div>
+        </DialogContent>
       </Dialog>
     </div>
   );

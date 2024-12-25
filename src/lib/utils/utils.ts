@@ -478,7 +478,6 @@ export const isTigerTrapped = (args: {
   );
 
   if (tigerHasAValidKill) {
-    console.log("Tiger has a valid kill move", tigerCord);
     return false;
   }
 
@@ -613,25 +612,6 @@ const tigerHasAValidKillMove = (
     if (point.x < 1 || point.y < 1 || point.x > 5 || point.y > 5) {
       return invalidIndexes.push(idx);
     }
-
-    // Check the move is in the grid lines
-    const isInGridLine = gridLineCords.find((line) => {
-      return (
-        (line.from === tigerCord &&
-          line.to === Number(point.x.toString() + point.y.toString())) ||
-        (line.from === Number(point.x.toString() + point.y.toString()) &&
-          line.to === tigerCord)
-      );
-    });
-
-    console.log(
-      isInGridLine,
-      tigerCord,
-      Number(point.x.toString() + point.y.toString())
-    );
-    // console.log(gridLineCords);
-    // console.log("Is in grid line", isInGridLine);
-    // if (!isInGridLine) invalidIndexes.push(idx);
   });
 
   // Filter out the invalid indexes from both the first and second points to search
