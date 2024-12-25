@@ -463,8 +463,8 @@ export default function Home() {
               return (
                 <Image
                   key={idx}
-                  height={100}
-                  width={100}
+                  height={isPhone ? 70 : 100}
+                  width={isPhone ? 70 : 100}
                   image={tigerImage}
                   alt="characters"
                   preventDefault={true}
@@ -496,7 +496,6 @@ export default function Home() {
                       ? { x: 1.01, y: 1.01 }
                       : { x: 1, y: 1 }
                   }
-                  sca
                   shadowColor={
                     toMove?.character === "tiger" && toMove.index === idx
                       ? "red"
@@ -511,18 +510,18 @@ export default function Home() {
                     tiger.cord
                       ? (boardPoints.find((e) => {
                           return e.point === tiger.cord;
-                        })?.x || 0) - 50
+                        })?.x || 0) - (isPhone ? 35 : 50)
                       : tiger.x
-                      ? tiger.x - 50
+                      ? tiger.x - (isPhone ? 35 : 50)
                       : 0
                   }
                   y={
                     tiger.cord
                       ? (boardPoints.find((e) => {
                           return e.point === tiger.cord;
-                        })?.y || 0) - 50
+                        })?.y || 0) - (isPhone ? 35 : 50)
                       : tiger.y
-                      ? tiger.y - 50
+                      ? tiger.y - (isPhone ? 35 : 50)
                       : 0
                   }
                 />
@@ -536,8 +535,8 @@ export default function Home() {
               return (
                 <Image
                   key={idx}
-                  height={80}
-                  width={80}
+                  height={isPhone ? 60 : 80}
+                  width={isPhone ? 60 : 80}
                   image={goatImage}
                   alt="characters"
                   onMouseEnter={(e) => {
@@ -564,18 +563,18 @@ export default function Home() {
                     goats.cord
                       ? (boardPoints.find((e) => {
                           return e.point === goats.cord;
-                        })?.x || 0) - 40
+                        })?.x || 0) - (isPhone ? 30 : 40)
                       : goats.x
-                      ? goats.x - 40
+                      ? goats.x - (isPhone ? 30 : 40)
                       : 0
                   }
                   y={
                     goats.cord
                       ? (boardPoints.find((e) => {
                           return e.point === goats.cord;
-                        })?.y || 0) - 40
+                        })?.y || 0) - (isPhone ? 30 : 40)
                       : goats.y
-                      ? goats.y - 40
+                      ? goats.y - (isPhone ? 30 : 40)
                       : 0
                   }
                   onClick={() => {
