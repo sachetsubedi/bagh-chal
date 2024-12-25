@@ -630,10 +630,11 @@ export default function Home() {
 
           <div className="flex justify-center items-center">
             <Button
-              variant={"secondary"}
+              variant={"default"}
               onClick={() => {
                 router.push("/");
               }}
+              className="border-none border-white"
             >
               Play Again
             </Button>
