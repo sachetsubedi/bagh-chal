@@ -32,7 +32,7 @@ const page = () => {
                 width={60}
                 height={60}
               />
-              Play Offline
+              Play Online
             </div>
             <div className="text-[20px] font-bold">Coming soon...</div>
           </div>
