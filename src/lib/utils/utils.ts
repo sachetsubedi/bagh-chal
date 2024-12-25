@@ -493,8 +493,6 @@ export const isTigerTrapped = (args: {
     });
   });
 
-  console.log("Valid points to search", validPointsToSearch);
-
   let hasFreeMove: boolean = false;
 
   // Now search all the points to search if they are occupied by goats or tigers
@@ -512,8 +510,6 @@ export const isTigerTrapped = (args: {
       if (!isTiger) hasFreeMove = true;
     }
   });
-
-  console.log("Has free move", hasFreeMove);
 
   return !hasFreeMove;
 };
@@ -553,6 +549,7 @@ const tigerHasAValidKillMove = (
   } catch (e) {
     console.log("In transition", e);
   }
+
   if (!splittedCords) return;
 
   const tigerCoords = {
@@ -562,7 +559,7 @@ const tigerHasAValidKillMove = (
 
   // const blackSpaces = [];
 
-  const firstPointsToSearch = directions.map((dir) => {
+  const firstPointsToSearchV0 = directions.map((dir) => {
     const cordToSearch = {
       x: tigerCoords.x + dir.x,
       y: tigerCoords.y + dir.y,
@@ -571,13 +568,42 @@ const tigerHasAValidKillMove = (
     return cordToSearch;
   });
 
-  const secondPointsToSearch = secondStepDirections.map((dir) => {
+  const secondPointsToSearchV0 = secondStepDirections.map((dir) => {
     const cordToSearch = {
       x: tigerCoords.x + dir.x,
       y: tigerCoords.y + dir.y,
     };
 
     return cordToSearch;
+  });
+
+  // Check if the first point to search are in the grid lines
+  const invalidIndexesV0: number[] = [];
+
+  firstPointsToSearchV0.forEach((point, idx) => {
+    if (point.x < 1 || point.y < 1 || point.x > 5 || point.y > 5) {
+      return invalidIndexesV0.push(idx);
+    }
+
+    // Check the move is in the grid lines
+    const isInGridLine = gridLineCords.find((line) => {
+      return (
+        (line.from === tigerCord &&
+          line.to === Number(point.x.toString() + point.y.toString())) ||
+        (line.from === Number(point.x.toString() + point.y.toString()) &&
+          line.to === tigerCord)
+      );
+    });
+
+    if (!isInGridLine) invalidIndexesV0.push(idx);
+  });
+
+  const firstPointsToSearch = firstPointsToSearchV0.filter((_, idx) => {
+    return !invalidIndexesV0.includes(idx);
+  });
+
+  const secondPointsToSearch = secondPointsToSearchV0.filter((_, idx) => {
+    return !invalidIndexesV0.includes(idx);
   });
 
   const invalidIndexes: number[] = [];
@@ -585,8 +611,27 @@ const tigerHasAValidKillMove = (
   //  get the indxes of the second points to search which are invalid, to remove them from the first points to search
   secondPointsToSearch.forEach((point, idx) => {
     if (point.x < 1 || point.y < 1 || point.x > 5 || point.y > 5) {
-      invalidIndexes.push(idx);
+      return invalidIndexes.push(idx);
     }
+
+    // Check the move is in the grid lines
+    const isInGridLine = gridLineCords.find((line) => {
+      return (
+        (line.from === tigerCord &&
+          line.to === Number(point.x.toString() + point.y.toString())) ||
+        (line.from === Number(point.x.toString() + point.y.toString()) &&
+          line.to === tigerCord)
+      );
+    });
+
+    console.log(
+      isInGridLine,
+      tigerCord,
+      Number(point.x.toString() + point.y.toString())
+    );
+    // console.log(gridLineCords);
+    // console.log("Is in grid line", isInGridLine);
+    // if (!isInGridLine) invalidIndexes.push(idx);
   });
 
   // Filter out the invalid indexes from both the first and second points to search
@@ -596,6 +641,19 @@ const tigerHasAValidKillMove = (
 
   const filteredSecondPointsToSearch = secondPointsToSearch.filter((_, idx) => {
     return !invalidIndexes.includes(idx);
+  });
+
+  // Check if the first and second point form a line and exist in the grid lines
+  const invalidV2Indexes: number[] = [];
+
+  filteredFirstPointsToSearch.forEach((point) => {
+    const isInALine = isMoveInALine({
+      from: { x: tigerCoords.x, y: tigerCoords.y },
+      to: { x: point.x, y: point.y },
+    });
+
+    if (!isInALine)
+      invalidV2Indexes.push(filteredSecondPointsToSearch.indexOf(point));
   });
 
   // i want to cry 😭
@@ -622,7 +680,7 @@ const tigerHasAValidKillMove = (
 
       const noTiger = renderedTigers.find((tiger) => {
         return (
-          tiger.cord ===
+          tiger.cord ==
           Number(
             filteredSecondPointsToSearch[idx].x.toString() +
               filteredSecondPointsToSearch[idx].y.toString()
