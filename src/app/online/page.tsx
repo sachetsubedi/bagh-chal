@@ -1,4 +1,5 @@
 "use client";
+import CustomRadioButton from "@/components/CustomRadioButtons/CustomRadioButton";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import {
@@ -17,6 +18,8 @@ const socket = io("http://localhost:3000");
 export default function Home() {
   // To get the window size
   const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
+
+  const [choosenCharacter, setChoosenCharacter] = useState<"tiger" | "goat">();
 
   const [isPhone, setIsPhone] = useState(false);
 
@@ -713,6 +716,23 @@ export default function Home() {
               Play Again
             </Button>
           </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open>
+        <DialogTitle></DialogTitle>
+        <DialogContent className="  font-extrabold">
+          <h1 className="text-2xl text-center text-black">
+            Choose your character
+          </h1>
+          <CustomRadioButton
+            buttons={[
+              { icon: "openmoji:tiger", label: "Tiger", value: "tiger" },
+              { icon: "openmoji:goat", label: "Goat", value: "goat" },
+            ]}
+            setValue={setChoosenCharacter}
+          ></CustomRadioButton>
+          <Button>Start</Button>
         </DialogContent>
       </Dialog>
     </div>
