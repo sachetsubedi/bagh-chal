@@ -9,7 +9,7 @@ import {
 } from "@/lib/utils/utils";
 import { T_BoardPoints, T_GridLines } from "@/types/types";
 import { useRouter } from "next/navigation";
-import { FC, Usable, use, useEffect, useState } from "react";
+import { FC, use, useEffect, useState } from "react";
 import { Circle, Image, Layer, Line, Stage } from "react-konva";
 import io, { Socket } from "socket.io-client";
 
@@ -18,7 +18,7 @@ interface DefaultEventsMap {
 }
 
 const Home: FC<{
-  params: Usable<{ roomId: string; method: string; c: string }>;
+  params: Promise<{ roomId: string; method: string; c: string }>;
 }> = ({ params }) => {
   const resolvedparams = use(params);
 
