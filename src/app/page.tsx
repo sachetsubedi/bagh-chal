@@ -13,7 +13,7 @@ const page = () => {
         </CardHeader>
         <CardContent className="flex flex-col gap-4 items-center justify-center">
           <Link href="/offline">
-            <div className="w-fit h-32 text-3xl bg-violet-600 flex justify-between items-center p-4 rounded-lg text-white hover:bg-violet-700 cursor-pointer">
+            <div className="w-fit  text-3xl bg-violet-600 flex justify-between items-center p-4 rounded-lg text-white hover:bg-violet-700 cursor-pointer">
               <Icon
                 icon="solar:cloud-cross-bold"
                 fontSize={60}
@@ -24,18 +24,19 @@ const page = () => {
             </div>
           </Link>
 
-          <div className="w-fit h-32 text-3xl bg-orange-400 flex flex-col justify-between items-center p-4 rounded-lg text-white hover:bg-orange-500 cursor-pointer">
-            <div className="flex items-center">
-              <Icon
-                icon="solar:cloud-check-bold"
-                fontSize={60}
-                width={60}
-                height={60}
-              />
-              Play Online
+          <Link href={"/online"}>
+            <div className="w-fit  text-3xl bg-orange-400 flex flex-col justify-between items-center p-4 rounded-lg text-white hover:bg-orange-500 cursor-pointer">
+              <div className="flex items-center">
+                <Icon
+                  icon="solar:cloud-check-bold"
+                  fontSize={60}
+                  width={60}
+                  height={60}
+                />
+                Play Online
+              </div>
             </div>
-            <div className="text-[20px] font-bold">Coming soon...</div>
-          </div>
+          </Link>
         </CardContent>
       </Card>
     </div>
