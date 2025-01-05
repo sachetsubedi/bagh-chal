@@ -204,6 +204,8 @@ const Home: FC<{
     } else if (type === "goat") {
       const currentGoat = renderedGoats[index];
 
+      if (!currentGoat) return;
+
       const currentCord = boardPoints.find((e) => e.point === currentGoat.cord);
 
       if (!currentCord) return;
@@ -264,7 +266,7 @@ const Home: FC<{
         }
       }, 0.5);
     }
-    setTurn(turn === "goat" ? "tiger" : "goat");
+    // setTurn(turn === "goat" ? "tiger" : "goat");
   };
 
   const getCurrentPosition = (index: number, type: "tiger" | "goat") => {
@@ -375,6 +377,7 @@ const Home: FC<{
       from: number;
       to: number;
     }) => {
+      console.log(data.character);
       setTurn(data.character === "tiger" ? "goat" : "tiger");
       moveCharacter(data.from, data.to, data.character, data.index);
     }

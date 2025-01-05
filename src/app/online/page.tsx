@@ -130,6 +130,9 @@ const Page = () => {
           <DialogTitle className="text-center text-2xl">
             Waiting for another player...
           </DialogTitle>
+          <div className="text-center">
+            Room Id: <span className="font-bold"> {roomToSearch} </span>
+          </div>
         </DialogContent>
       </Dialog>
 
