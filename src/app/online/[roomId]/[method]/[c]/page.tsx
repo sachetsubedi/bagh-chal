@@ -148,16 +148,6 @@ const Home: FC<{
 
       if (!socket) return;
 
-      socket.emit("positionChange", {
-        roomId: resolvedparams.roomId,
-        data: {
-          character: "tiger",
-          index,
-          from,
-          to,
-        },
-      });
-
       // Remove the cord from the tiger's location
       currentTiger.cord = undefined;
 
@@ -211,16 +201,6 @@ const Home: FC<{
       if (!currentCord) return;
 
       if (!socket) return;
-
-      socket.emit("positionChange", {
-        roomId: resolvedparams.roomId,
-        data: {
-          character: "goat",
-          index,
-          from,
-          to,
-        },
-      });
 
       // Remove the cord from the tiger's location
       currentGoat.cord = undefined;
@@ -301,6 +281,19 @@ const Home: FC<{
         // currentLocation[toMove.index].cord = destination;
         // setPrerenderedTigers(currentLocation);
 
+        if (!socket) return;
+        console.log(currentLocation[toMove.index].cord!);
+
+        socket.emit("positionChange", {
+          roomId: resolvedparams.roomId,
+          data: {
+            character: "tiger",
+            index: toMove.index,
+            from: currentLocation[toMove.index].cord!,
+            to: destination,
+          },
+        });
+
         moveCharacter(
           currentLocation[toMove.index].cord!,
           destination,
@@ -311,6 +304,19 @@ const Home: FC<{
         const currentLocation = renderedGoats;
         // currentLocation[toMove.index] = destination;
         // setRenderedGoats(currentLocation);
+
+        if (!socket) return;
+
+        socket.emit("positionChange", {
+          roomId: resolvedparams.roomId,
+          data: {
+            character: "goat",
+            index: toMove.index,
+            from: currentLocation[toMove.index].cord!,
+            to: destination,
+          },
+        });
+
         moveCharacter(
           currentLocation[toMove.index].cord!,
           destination,
@@ -377,7 +383,7 @@ const Home: FC<{
       from: number;
       to: number;
     }) => {
-      console.log(data.character);
+      console.log(data);
       setTurn(data.character === "tiger" ? "goat" : "tiger");
       moveCharacter(data.from, data.to, data.character, data.index);
     }
