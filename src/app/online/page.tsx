@@ -71,10 +71,12 @@ const Page = () => {
   return (
     <div>
       <Card className="w-full h-screen bg-slate-700 p-0 mt-0 rounded-none border-none shadow-none flex flex-col justify-center items-center">
-        <CardTitle className="text-white text-3xl">Welcome</CardTitle>
+        <CardTitle className="text-white text-3xl pb-10">
+          Create or Join a room
+        </CardTitle>
         <CardContent className="text-white font-bold flex flex-col gap-5">
           <div
-            className="rounded-sm p-3 flex justify-center gap-3 items-center bg-violet-500 hover:bg-violet-600 cursor-pointer"
+            className="rounded-sm p-3 flex  gap-3 items-center bg-violet-500 hover:bg-violet-600 cursor-pointer"
             onClick={() => {
               setCreateDialogOpen(true);
             }}
@@ -84,7 +86,7 @@ const Page = () => {
           </div>
 
           <div
-            className="rounded-sm p-3 flex justify-center gap-3 items-center bg-violet-500 hover:bg-violet-600 cursor-pointer"
+            className="rounded-sm p-3 flex  gap-3 items-center bg-violet-500 hover:bg-violet-600 cursor-pointer"
             onClick={() => {
               setJoinRoom(true);
             }}
@@ -131,7 +133,10 @@ const Page = () => {
         </DialogContent>
       </Dialog>
 
-      <Dialog open={createDialogOpen}>
+      <Dialog
+        open={createDialogOpen}
+        onOpenChange={() => setCreateDialogOpen(false)}
+      >
         <DialogTitle></DialogTitle>
         <DialogContent className="  font-extrabold">
           <h1 className="text-2xl text-center text-black">
