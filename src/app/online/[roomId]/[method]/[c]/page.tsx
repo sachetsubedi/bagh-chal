@@ -36,8 +36,6 @@ const Home: FC<{
   // To get the window size
   const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
 
-  // const [choosenCharacter, setChoosenCharacter] = useState<"tiger" | "goat">();
-
   const [isPhone, setIsPhone] = useState(false);
 
   const router = useRouter();
@@ -122,6 +120,7 @@ const Home: FC<{
     type: "tiger" | "goat",
     index: number
   ) => {
+    // console.log("HERE");
     if (!boardPoints) return;
 
     const fromCords = boardPoints.find((e) => e.point === from);
@@ -264,6 +263,7 @@ const Home: FC<{
         }
       }, 0.5);
     }
+    setTurn(turn === "goat" ? "tiger" : "goat");
   };
 
   const getCurrentPosition = (index: number, type: "tiger" | "goat") => {
@@ -317,7 +317,6 @@ const Home: FC<{
       }
       setDestination(undefined);
       setToMove(undefined);
-      setTurn(turn === "goat" ? "tiger" : "goat");
     }
   }, [destination, toMove, prerenderedTigers, renderedGoats]);
 
@@ -375,6 +374,7 @@ const Home: FC<{
       from: number;
       to: number;
     }) => {
+      setTurn(data.character === "tiger" ? "goat" : "tiger");
       moveCharacter(data.from, data.to, data.character, data.index);
     }
   );
@@ -409,12 +409,13 @@ const Home: FC<{
         <h1 className="hidden md:block text-2xl text-white font-bold">
           BAGH CHAL
         </h1>
-        <div className="flex justify-center">
+        <div className="flex justify-center flex-col items-center text-white">
           <div className="text-2xl font-bold text-white bg-violet-600 p-2 rounded-lg">
             {turn === "goat"
               ? `${goatsPlaced >= 20 ? "Goat's Move" : "Goat to place"} `
               : "Tiger's Move"}
           </div>
+          <div>You are plaing as {resolvedparams.c}</div>
         </div>
         <div className="flex items-end mr-5 gap-2">
           <div className="p-2 bg-violet-500 text-white rounded-xl">
@@ -467,7 +468,11 @@ const Home: FC<{
                   onClick={() => {
                     if (isChanging) return;
 
-                    if (turn === "goat" && goatsPlaced < 20) {
+                    if (
+                      turn === "goat" &&
+                      goatsPlaced < 20 &&
+                      resolvedparams.c == "goat"
+                    ) {
                       // Emit the goat placed event
                       socket.emit("goatPlaced", {
                         roomId: resolvedparams.roomId,
@@ -519,7 +524,11 @@ const Home: FC<{
                   onTap={() => {
                     if (isChanging) return;
 
-                    if (turn === "goat" && goatsPlaced < 20) {
+                    if (
+                      turn === "goat" &&
+                      goatsPlaced < 20 &&
+                      resolvedparams.c == "goat"
+                    ) {
                       // Emit the goat placed event
 
                       socket.emit("goatPlaced", { cord: point.point });
@@ -576,13 +585,13 @@ const Home: FC<{
                   onTap={() => {
                     if (isChanging) return;
                     // If the turn is tiger, then the tiger can move
-                    if (turn === "tiger")
+                    if (turn === "tiger" && resolvedparams.c == "tiger")
                       setToMove({ character: "tiger", index: idx });
                   }}
                   onClick={() => {
                     if (isChanging) return;
                     // If the turn is tiger, then the tiger can move
-                    if (turn === "tiger")
+                    if (turn === "tiger" && resolvedparams.c == "tiger")
                       setToMove({ character: "tiger", index: idx });
                   }}
                   onMouseEnter={(e) => {
@@ -685,13 +694,21 @@ const Home: FC<{
                   onClick={() => {
                     if (isChanging) return;
 
-                    if (turn === "goat" && goatsPlaced >= 20) {
+                    if (
+                      turn === "goat" &&
+                      goatsPlaced >= 20 &&
+                      resolvedparams.c == "goat"
+                    ) {
                       setToMove({ character: "goat", index: idx });
                     }
                   }}
                   onTap={() => {
                     if (isChanging) return;
-                    if (turn === "goat" && goatsPlaced >= 20) {
+                    if (
+                      turn === "goat" &&
+                      goatsPlaced >= 20 &&
+                      resolvedparams.c == "goat"
+                    ) {
                       setToMove({ character: "goat", index: idx });
                     }
                   }}
