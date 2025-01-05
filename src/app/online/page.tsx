@@ -5,6 +5,7 @@ import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { BACKEND_API } from "@/config/env";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
@@ -26,9 +27,7 @@ const Page = () => {
   const query = useQuery({
     queryKey: ["rooms", roomToSearch], // Added roomToSearch to the queryKey for proper invalidation and refetching
     queryFn: async () => {
-      const response = await axios.get(
-        `http://localhost:3000/rooms/${roomToSearch}`
-      );
+      const response = await axios.get(`${BACKEND_API}/rooms/${roomToSearch}`);
       return response.data;
     },
     enabled: !!roomToSearch, // Fetch only when roomToSearch is not empty
@@ -44,7 +43,7 @@ const Page = () => {
   const mutation = useMutation({
     mutationFn: async () => {
       const response = await axios.post(
-        "http://localhost:3000/rooms/create-and-join",
+        `${BACKEND_API}/rooms/create-and-join`,
         { character: choosenCharacter }
       );
       return response.data;
@@ -56,7 +55,7 @@ const Page = () => {
 
   const joinRoomMutation = useMutation({
     mutationFn: async () => {
-      const response = await axios.post("http://localhost:3000/rooms/join", {
+      const response = await axios.post(`${BACKEND_API}/rooms/join`, {
         roomId,
       });
       return response.data;

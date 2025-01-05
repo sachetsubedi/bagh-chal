@@ -1,6 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { BACKEND_API } from "@/config/env";
 import {
   generateGridPoints,
   isTigerTrapped,
@@ -27,7 +28,7 @@ const Home: FC<{
   const [roomFull, setRoomFull] = useState(false);
 
   useEffect(() => {
-    const socket = io("http://localhost:3000");
+    const socket = io(BACKEND_API);
     setSocket(socket);
 
     socket.emit("joinRoom", { roomId: resolvedparams.roomId });
