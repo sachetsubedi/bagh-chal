@@ -171,15 +171,12 @@ const Home: FC<{
       }
 
       const interval = setInterval(() => {
-        if (!currentTiger.x || !currentTiger.y) {
-          currentTiger.x = currentCord.x;
-          currentTiger.y = currentCord.y;
-        }
-
         // Update coordinates step by step
         if (
-          Math.abs(currentTiger.x - toCords.x) > epsilon ||
-          Math.abs(currentTiger.y - toCords.y) > epsilon
+          currentTiger.x &&
+          currentTiger.y &&
+          (Math.abs(currentTiger.x - toCords.x) > epsilon ||
+            Math.abs(currentTiger.y - toCords.y) > epsilon)
         ) {
           currentTiger.x += stepX;
           currentTiger.y += stepY;
@@ -226,15 +223,12 @@ const Home: FC<{
       }
 
       const interval = setInterval(() => {
-        if (!currentGoat.x || !currentGoat.y) {
-          currentGoat.x = currentCord.x;
-          currentGoat.y = currentCord.y;
-        }
-
         // Update coordinates step by step
         if (
-          Math.abs(currentGoat.x - toCords.x) > epsilon ||
-          Math.abs(currentGoat.y - toCords.y) > epsilon
+          currentGoat.x &&
+          currentGoat.y &&
+          (Math.abs(currentGoat.x - toCords.x) > epsilon ||
+            Math.abs(currentGoat.y - toCords.y) > epsilon)
         ) {
           currentGoat.x += stepX;
           currentGoat.y += stepY;
