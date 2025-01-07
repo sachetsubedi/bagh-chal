@@ -9,7 +9,7 @@ import {
 } from "@/lib/utils/utils";
 import { T_BoardPoints, T_GridLines } from "@/types/types";
 import { useRouter } from "next/navigation";
-import { FC, use, useEffect, useState } from "react";
+import { FC, use, useEffect, useRef, useState } from "react";
 import { Circle, Image, Layer, Line, Stage } from "react-konva";
 import io, { Socket } from "socket.io-client";
 
@@ -30,8 +30,12 @@ const Home: FC<{
   useEffect(() => {
     const socket = io(BACKEND_API);
     setSocket(socket);
-
     socket.emit("joinRoom", { roomId: resolvedparams.roomId });
+
+    // Clean up on unmount
+    return () => {
+      socket.disconnect();
+    };
   }, []);
 
   // To get the window size
@@ -104,6 +108,16 @@ const Home: FC<{
 
   const [goatKillsCount, setGoatKillsCount] = useState<number>(0);
 
+  // Refs to store current tiger and goat locations
+  const prerenderedTigersRef = useRef(prerenderedTigers);
+  const renderedGoatsRef = useRef(renderedGoats);
+
+  useEffect(() => {
+    // Update refs whenever the state changes
+    prerenderedTigersRef.current = prerenderedTigers;
+    renderedGoatsRef.current = renderedGoats;
+  }, [prerenderedTigers, renderedGoats]);
+
   useEffect(() => {
     if (goatKillsCount >= 5) setGameOver({ winner: "tiger" });
   }, [goatKillsCount]);
@@ -121,7 +135,6 @@ const Home: FC<{
     type: "tiger" | "goat",
     index: number
   ) => {
-    // console.log("HERE");
     if (!boardPoints) return;
 
     const fromCords = boardPoints.find((e) => e.point === from);
@@ -192,6 +205,7 @@ const Home: FC<{
         }
       }, 1);
     } else if (type === "goat") {
+      // console.log("Rendered goats", renderedGoats);
       const currentGoat = renderedGoats[index];
 
       if (!currentGoat) return;
@@ -225,16 +239,23 @@ const Home: FC<{
           currentGoat.x += stepX;
           currentGoat.y += stepY;
 
-          const newGoatsLocation = renderedGoats;
+          const newGoatsLocation = [...renderedGoatsRef.current];
           newGoatsLocation[index] = currentGoat;
 
-          setRenderedGoats([...newGoatsLocation]);
+          console.log(renderedGoatsRef.current, newGoatsLocation);
+
+          setRenderedGoats(() => {
+            const updatedGoats = [...newGoatsLocation];
+            updatedGoats[index] = currentGoat;
+            return updatedGoats;
+          });
+          console.log("RenderedGoatsr", renderedGoats);
         } else {
           // Stop the interval when the target is reached
           clearInterval(interval);
 
           // Set the new cord
-          const newGoatsLocation = renderedGoats;
+          const newGoatsLocation = [...renderedGoatsRef.current];
           newGoatsLocation[index] = currentGoat;
           currentGoat.cord = to;
 
@@ -242,7 +263,11 @@ const Home: FC<{
           currentGoat.x = undefined;
           currentGoat.y = undefined;
 
-          setRenderedGoats([...newGoatsLocation]);
+          setRenderedGoats(() => {
+            const updatedGoats = [...newGoatsLocation];
+            updatedGoats[index] = currentGoat;
+            return updatedGoats;
+          });
         }
       }, 0.5);
     }
@@ -282,7 +307,6 @@ const Home: FC<{
         // setPrerenderedTigers(currentLocation);
 
         if (!socket) return;
-        console.log(currentLocation[toMove.index].cord!);
 
         socket.emit("positionChange", {
           roomId: resolvedparams.roomId,
@@ -300,6 +324,7 @@ const Home: FC<{
           "tiger",
           toMove.index
         );
+        setTurn("goat");
       } else {
         const currentLocation = renderedGoats;
         // currentLocation[toMove.index] = destination;
@@ -323,6 +348,7 @@ const Home: FC<{
           "goat",
           toMove.index
         );
+        setTurn("tiger");
       }
       setDestination(undefined);
       setToMove(undefined);
@@ -383,8 +409,8 @@ const Home: FC<{
       from: number;
       to: number;
     }) => {
-      console.log(data);
       setTurn(data.character === "tiger" ? "goat" : "tiger");
+      // console.log(data);
       moveCharacter(data.from, data.to, data.character, data.index);
     }
   );
@@ -407,14 +433,10 @@ const Home: FC<{
     setRoomFull(true);
   });
 
-  socket.on("message", (message) => {
-    console.log(message);
-  });
-
   if (!socket) return <div>Loading...</div>;
 
   return (
-    <div className="h-screen landing-play ">
+    <div className="h-screen landing-play overflow-hidden">
       <div className="px-2 flex justify-between items-center">
         <h1 className="hidden md:block text-2xl text-white font-bold">
           BAGH CHAL
