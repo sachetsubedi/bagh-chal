@@ -249,7 +249,6 @@ const Home: FC<{
             updatedGoats[index] = currentGoat;
             return updatedGoats;
           });
-          // console.log("RenderedGoatsr", renderedGoats);
         } else {
           // Stop the interval when the target is reached
           clearInterval(interval);
@@ -563,7 +562,11 @@ const Home: FC<{
                     ) {
                       // Emit the goat placed event
 
-                      socket.emit("goatPlaced", { cord: point.point });
+                      // Emit the goat placed event
+                      socket.emit("goatPlaced", {
+                        roomId: resolvedparams.roomId,
+                        data: { cord: point.point },
+                      });
 
                       // If the turn and all goats are not placed, then place the goat
                       setRenderedGoats([
