@@ -125,13 +125,25 @@ const Page = () => {
         </DialogContent>
       </Dialog>
 
-      <Dialog open={waitingDialogOpen}>
+      <Dialog
+        open={waitingDialogOpen}
+        onOpenChange={() => {
+          setWaitingDFialogOpen(false);
+        }}
+      >
         <DialogContent>
           <DialogTitle className="text-center text-2xl">
             Waiting for another player...
           </DialogTitle>
-          <div className="text-center">
-            Room Id: <span className="font-bold"> {roomToSearch} </span>
+          <div className="text-center flex gap-2 items-center justify-center">
+            Room Id: <span className="font-bold">{roomToSearch}</span>{" "}
+            {mutation.isPending && (
+              <Icon
+                icon="svg-spinners:blocks-shuffle-3"
+                width="15"
+                height="15"
+              />
+            )}
           </div>
         </DialogContent>
       </Dialog>
