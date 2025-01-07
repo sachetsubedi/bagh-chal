@@ -31,7 +31,7 @@ const Page = () => {
       return response.data;
     },
     enabled: !!roomToSearch, // Fetch only when roomToSearch is not empty
-    refetchInterval: 5000, // Poll every 5 seconds
+    refetchInterval: 2000, // Poll every 5 seconds
   });
 
   if (query.isSuccess) {
@@ -165,6 +165,7 @@ const Page = () => {
             setValue={setChoosenCharacter}
           ></CustomRadioButton>
           <Button
+            disabled={!choosenCharacter}
             onClick={() => {
               setWaitingDFialogOpen(true);
               mutation.mutate();
