@@ -242,14 +242,14 @@ const Home: FC<{
           const newGoatsLocation = [...renderedGoatsRef.current];
           newGoatsLocation[index] = currentGoat;
 
-          console.log(renderedGoatsRef.current, newGoatsLocation);
+          // console.log(renderedGoatsRef.current, newGoatsLocation);
 
           setRenderedGoats(() => {
             const updatedGoats = [...newGoatsLocation];
             updatedGoats[index] = currentGoat;
             return updatedGoats;
           });
-          console.log("RenderedGoatsr", renderedGoats);
+          // console.log("RenderedGoatsr", renderedGoats);
         } else {
           // Stop the interval when the target is reached
           clearInterval(interval);
