@@ -1,36 +1,81 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Bagh-Chal Game
 
-## Getting Started
+Bagh-Chal, which translates to "Tiger Movement," is a traditional strategy board game originating from Nepal. It is a two-player game where one player controls four tigers, and the other controls twenty goats. The objective is for the tigers to "hunt" goats, while the goats aim to trap the tigers, making them unable to move.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **Interactive Gameplay**: Play as either the tigers or the goats.
+- **Dynamic Rules Implementation**: Enforces all rules of Bagh-Chal, including valid moves and captures.
+- **Responsive Design**: Playable on desktop and mobile devices.
+- **Multiplayer Support** : Play with friends online or offline.
+- **Customizable Theme**: Enjoy traditional or modern visuals for the board and pieces.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## How to Play
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Objective
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Tigers**: Capture at least 5 goats by jumping over them.
+- **Goats**: Block all tigers so they cannot move.
 
-## Learn More
+### Rules
 
-To learn more about Next.js, take a look at the following resources:
+1. The game begins with all four tigers placed on the board and no goats.
+2. The goat player places one goat per turn until all 20 goats are on the board.
+3. Tigers can move to adjacent points or jump over a goat to capture it (similar to checkers).
+4. Goats can only move to adjacent points and cannot jump over tigers.
+5. The game ends when either the tigers capture 5 goats or all tigers are blocked from moving.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Installation
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Prerequisites
 
-## Deploy on Vercel
+- Node.js (v16 or higher)
+- npm or pnpm
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Steps
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/sachetsubedi/bagh-chal.git
+   cd bagh-chal
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Start the development server:
+   ```bash
+   npm run dev
+   ```
+4. Open your browser and navigate to `http://localhost:3000` to play the game.
+
+## Technologies Used
+
+- **Frontend**: React, Next.js, Tailwind CSS, konva.js
+- **Backend**: Node.js with Express (optional for multiplayer)
+- **Database**: Prisma with MySQL
+- **Hosting**: Vercel
+
+## Contributing
+
+Contributions are welcome (if you can understand this mess :) ) ! If you'd like to contribute, please fork the repository and submit a pull request. Ensure your code follows the existing style.
+
+## License
+
+This project is licensed under the MIT License. See the LICENSE file for details.
+
+## Acknowledgements
+
+- Inspired by the traditional Nepali board game Bagh-Chal.
+
+## Contact
+
+If you have any questions or suggestions, feel free to reach out:
+
+- **Developer**: Sachet Subedi
+- **Email**: mail@sachetsubedi001.com.np
+- **GitHub**: [github.sachetsubedi001.com.np](https://github.com/sachetsubedi)
+
+---
+
+Enjoy playing Bagh-Chal!
